@@ -1,0 +1,23 @@
+{
+  "rewrites": [
+    {
+      "source": "/api/youtube",
+      "destination": "/api/youtube"
+    },
+    {
+      "source": "/((?!api/youtube).*)",
+      "has": [
+        {
+          "type": "header",
+          "key": "User-Agent",
+          "value": "(.*(Googlebot|Bingbot|Slurp|DuckDuckBot|facebookexternalhit|Twitterbot|LinkedInBot|Pinterestbot|WhatsApp|Instagram|Discordbot|Slackbot|TikTokBot|Redditbot|TelegramBot|Facebot|Applebot|Baiduspider|YandexBot).*)"
+        }
+      ],
+      "destination": "/api/handler"
+    },
+    {
+      "source": "/((?!api/youtube).*)",
+      "destination": "/index.html"
+    }
+  ]
+}
