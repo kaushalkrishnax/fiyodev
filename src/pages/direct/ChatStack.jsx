@@ -16,11 +16,10 @@ const ChatStack = () => {
           <div className="w-full lg:min-w-1/2 lg:border-r border-gray-300 dark:border-gray-800">
             <Inbox />
           </div>
-          <div className="w-full hidden lg:w-1/2 lg:block">
+          <div className="w-full hidden lg:min-w-1/2 lg:block">
             <div className="flex flex-col justify-center items-center h-screen w-full">
               <svg
                 className="chat-icon w-28 h-28 p-6 border-4 border-white rounded-full"
-                title="Chat with your mates"
                 fill="#fff"
                 role="img"
                 viewBox="0 0 24 24"

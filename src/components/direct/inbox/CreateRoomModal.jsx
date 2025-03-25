@@ -36,7 +36,7 @@ const CreateRoomModal = ({
 
   const debouncedSetSearch = debounce((value) => setSearch(value), 300);
 
-  const filteredUsers = usersList.filter(
+  const filteredUsers = usersList?.filter(
     (user) =>
       user.id !== userInfo.id &&
       (user.full_name.toLowerCase().includes(search.toLowerCase()) ||
@@ -101,13 +101,13 @@ const CreateRoomModal = ({
           )}
         </div>
         <div className="flex-1 overflow-y-auto px-4 py-2">
-          {filteredUsers.length === 0 ? (
+          {filteredUsers?.length === 0 ? (
             <p className="text-gray-500 dark:text-gray-400 text-center py-4">
               No users found.
             </p>
           ) : (
             <div className="flex flex-col gap-4">
-              {filteredUsers.map((user) => {
+              {filteredUsers?.map((user) => {
                 const isSelected = selectedUsers.some((u) => u.id === user.id);
                 return (
                   <div

@@ -271,7 +271,7 @@ const Clips = () => {
     <div className="flex justify-center mx-auto w-full min-h-screen">
       <div className="flex flex-col lg:flex-row max-w-7xl w-full px-2 md:px-6 gap-6">
         <div className="flex flex-col lg:flex-row w-full">
-          <div className="flex-1 lg:w-2/3">
+          <div className="flex-1 lg:w-2/3 h-full">
             <div
               ref={containerRef}
               className="flex flex-col w-full max-w-3xl mx-auto overflow-y-scroll snap-y snap-mandatory h-screen no-scrollbar"

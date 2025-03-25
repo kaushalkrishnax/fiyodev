@@ -4,6 +4,7 @@ import AppContext from "./context/items/AppContext";
 import UserContext from "./context/items/UserContext";
 import LoadingScreen from "./components/app/LoadingScreen";
 import NavStack from "./layout/NavStack";
+import PlayerStack from "./components/music/PlayerStack";
 import {
   Home,
   Search,
@@ -50,7 +51,8 @@ function App() {
     </>
   );
 
-  const noBottomNavRoutes = [
+  const noPbRoutes = [
+    "/clips",
     "/direct/inbox",
     "/direct/t/:id",
     "/notifications",
@@ -61,11 +63,10 @@ function App() {
       {isUserAuthenticated && <NavStack />}
       <main
         className={`w-full max-w-7xl mx-auto md:px-6 ${
-          noBottomNavRoutes.includes(location.pathname)
-            ? "pb-0"
-            : "pb-12 md:pb-0"
+          noPbRoutes.includes(location.pathname) ? "pb-0" : "pb-12 md:pb-0"
         }`}
       >
+        <PlayerStack />
         <Routes>
           {isUserAuthenticated ? authenticatedRoutes : unauthenticatedRoutes}
           <Route path="*" element={<NotFound404 />} />

@@ -3,7 +3,6 @@ import { useParams } from "react-router-dom";
 import UserContext from "../context/items/UserContext";
 import { getUser } from "../hooks/useUserUtils.js";
 import CustomTopNav from "../layout/items/CustomTopNav";
-import Suggestions from "../components/app/Suggestions";
 import { NotFound404 } from "./index.js";
 import {
   getUserFollowers,
@@ -28,7 +27,7 @@ const Profile = () => {
     setLoading(true);
     getUser(username)
       .then((response) => {
-        if (!response.status.success) {
+        if (!response?.status.success) {
           setUser(null);
           return;
         }
@@ -100,9 +99,6 @@ const Profile = () => {
             <div className="flex flex-col w-full max-w-3xl mx-auto py-6">
               <NotFound404 />
             </div>
-          </div>
-          <div className="hidden lg:block lg:min-w-1/3">
-            <Suggestions />
           </div>
         </div>
       </div>
@@ -224,9 +220,6 @@ const Profile = () => {
               </div>
             </div>
           </div>
-        </div>
-        <div className="hidden lg:block lg:w-1/3">
-          <Suggestions />
         </div>
       </div>
     </div>

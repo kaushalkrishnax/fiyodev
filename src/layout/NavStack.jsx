@@ -5,23 +5,23 @@ import BottomNav from "./items/BottomNav";
 
 const NavStack = () => {
   const [isMobile, setIsMobile] = useState(
-    window.matchMedia("(max-width: 768px)").matches
+    window.matchMedia("(max-width: 767px)").matches
   );
-
-  const noBottomNavRoutes = [ 
-    "/direct/inbox",
-    "/direct/t/:id",
-    "/notifications",
-  ];
 
   useEffect(() => {
     const handleResize = () => {
-      setIsMobile(window.matchMedia("(max-width: 768px)").matches);
+      setIsMobile(window.matchMedia("(max-width: 767px)").matches);
     };
 
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
+
+  const noBottomNavRoutes = [
+    "/direct/inbox",
+    "/direct/t/:id",
+    "/notifications",
+  ];
 
   return (
     <>

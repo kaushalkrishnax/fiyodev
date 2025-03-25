@@ -5,7 +5,7 @@ const AppContext = createContext(null);
 export const AppProvider = ({ children }) => {
   const [isAppLoading, setIsAppLoading] = useState(true);
   const [contentQuality, setContentQuality] = useState(() => {
-    return localStorage.getItem("contentQuality") || "low";
+    return localStorage.getItem("contentQuality") || "normal";
   });
   const [connectedToInternet, setConnectedToInternet] = useState(() => {
     return navigator.onLine;

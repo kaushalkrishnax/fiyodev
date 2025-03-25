@@ -32,18 +32,14 @@ export const MusicProvider = ({ children }) => {
   useEffect(() => {
     if (isPlayerReady) return;
 
-    const setupPlayer = () => {
-      try {
-        const audio = audioRef.current;
-        audio.preload = "metadata";
-        setIsPlayerReady(true);
-      } catch (error) {
-        console.error("Error setting up Audio:", error);
-        setIsPlayerReady(false);
-      }
-    };
-
-    setupPlayer();
+    try {
+      const audio = audioRef.current;
+      audio.preload = "metadata";
+      setIsPlayerReady(true);
+    } catch (error) {
+      console.error("Error setting up Audio:", error);
+      setIsPlayerReady(false);
+    }
   }, [isPlayerReady]);
 
   useEffect(() => {
@@ -60,16 +56,15 @@ export const MusicProvider = ({ children }) => {
 
         if (
           audio.duration > 0 &&
-          audio.currentTime >= audio.duration - 0.01 &&
-          !isHandlingNextAudioTrack &&
-          !audio.paused
+          audio.currentTime >= audio.duration &&
+          !isHandlingNextAudioTrack
         ) {
           setIsHandlingNextAudioTrack(true);
-          if (!loopAudio) {
-            MusicUtils.handleNextAudioTrack();
+          if (loopAudio) {
+            seekTo(0);
+            handleAudioPlay();
           } else {
-            audio.currentTime = 0;
-            audio.play();
+            handleNextAudioTrack();
           }
         }
       } catch (error) {
@@ -77,41 +72,34 @@ export const MusicProvider = ({ children }) => {
       }
     };
 
-    const handlePlay = () => setIsAudioPlaying(true);
-    const handlePause = () => setIsAudioPlaying(false);
-    const handleLoadStart = () => setIsAudioLoading(true);
-    const handleCanPlay = () => setIsAudioLoading(false);
-    const handleError = (e) => console.error("Audio error:", e);
+    const handleEnd = () => {
+      if (loopAudio) {
+        audio.currentTime = 0;
+        audio.play().catch((err) => console.error("Loop play error:", err));
+      }
+    };
 
     audio.addEventListener("timeupdate", updateProgress);
-    audio.addEventListener("play", handlePlay);
-    audio.addEventListener("pause", handlePause);
-    audio.addEventListener("loadstart", handleLoadStart);
-    audio.addEventListener("canplay", handleCanPlay);
-    audio.addEventListener("error", handleError);
-
-    updateProgress();
-    const progressInterval = setInterval(updateProgress, 1000);
+    audio.addEventListener("ended", handleEnd);
 
     return () => {
       audio.removeEventListener("timeupdate", updateProgress);
-      audio.removeEventListener("play", handlePlay);
-      audio.removeEventListener("pause", handlePause);
-      audio.removeEventListener("loadstart", handleLoadStart);
-      audio.removeEventListener("canplay", handleCanPlay);
-      audio.removeEventListener("error", handleError);
-      clearInterval(progressInterval);
+      audio.removeEventListener("ended", handleEnd);
     };
-  }, [isAudioPlaying, loopAudio, isPlayerReady]);
+  }, [isAudioPlaying, loopAudio, isPlayerReady, isHandlingNextAudioTrack]);
 
   useEffect(() => {
+    if (!currentTrack?.id || !currentTrack?.link) return;
+
     const playAudio = async () => {
       try {
-        if (!currentTrack?.id || !currentTrack?.link) return;
-
+        setIsAudioLoading(true);
         const audio = audioRef.current;
-        audio.src = currentTrack.link;
-        audio.load();
+
+        if (audio.src !== currentTrack.link) {
+          audio.src = currentTrack.link;
+          audio.load();
+        }
 
         await audio.play();
         setIsAudioPlaying(true);
@@ -119,19 +107,20 @@ export const MusicProvider = ({ children }) => {
         console.error(`Error playing track: ${error}`);
       } finally {
         setIsHandlingNextAudioTrack(false);
+        setIsAudioLoading(false);
       }
     };
 
     playAudio();
-  }, [currentTrack?.link]);
+  }, [currentTrack?.id, currentTrack?.link]);
 
-  const handleAudioPlay = () => audioRef.current.play();
-  const handleAudioPause = () => audioRef.current.pause();
   const handleNextAudioTrack = async () => {
     await MusicUtils.handleNextAudioTrack();
     setIsHandlingNextAudioTrack(false);
   };
   const seekTo = (position) => {
+    if (!audioRef.current) return;
+    setAudioProgress({ position, duration: audioProgress?.duration });
     audioRef.current.currentTime = position;
   };
 
@@ -150,8 +139,6 @@ export const MusicProvider = ({ children }) => {
         setPreviouslyPlayedTracks,
         audioProgress,
         setAudioProgress,
-        handleAudioPlay,
-        handleAudioPause,
         handleNextAudioTrack,
         seekTo,
         ...MusicUtils,

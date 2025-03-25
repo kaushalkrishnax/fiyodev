@@ -89,7 +89,9 @@ const SearchBox = ({
     <div className="h-full w-full">
       <div
         ref={searchRef}
-        className={`flex flex-row items-center w-full bg-secondary-bg dark:bg-secondary-bg-dark pl-2 rounded-t-2xl ${!searchQuery ? "rounded-b-2xl" : ""} transition-shadow`}
+        className={`flex flex-row items-center w-full bg-secondary-bg dark:bg-secondary-bg-dark pl-2 rounded-t-2xl ${
+          !searchSuggestions.length > 0 ? "rounded-b-2xl" : ""
+        } transition-shadow`}
         role="search"
       >
         <input

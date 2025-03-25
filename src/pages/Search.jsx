@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import Suggestions from "../components/app/Suggestions";
 import UserCard from "../components/app/UserCard";
 import { searchUsers } from "../hooks/useUserUtils";
 
@@ -117,11 +116,6 @@ const Search = () => {
               </div>
             )}
           </div>
-        </div>
-
-        {/* Suggestions Section */}
-        <div className="hidden lg:block lg:min-w-1/3">
-          <Suggestions />
         </div>
       </div>
     </div>

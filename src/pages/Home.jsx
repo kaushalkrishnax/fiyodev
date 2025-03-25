@@ -2,7 +2,6 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import Post from "../components/home/Post.jsx";
 import FeedCard from "../components/home/FeedCard.jsx";
-import Suggestions from "../components/app/Suggestions.jsx";
 import CustomTopNav from "../layout/items/CustomTopNav.jsx";
 import { ChatIcon, CreateIcon, NotificationsIcon } from "../icons.jsx";
 
@@ -122,11 +121,6 @@ const Home = () => {
               ))}
             </div>
           </div>
-        </div>
-
-        {/* Suggestions Section */}
-        <div className="hidden lg:block lg:min-w-1/3">
-          <Suggestions />
         </div>
       </div>
     </div>

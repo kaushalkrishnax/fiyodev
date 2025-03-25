@@ -33,7 +33,7 @@ export const SocketProvider = ({ children }) => {
   useEffect(() => {
     if (isUserAuthenticated && !socketRef.current) {
       console.log("Creating new socket connection");
-      socketRef.current = io("fiyochatSrvBaseUri", {
+      socketRef.current = io("", {
         withCredentials: true,
         transports: ["websocket"],
         auth: {

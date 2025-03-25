@@ -23,6 +23,12 @@
   --color-primary-text-dark: #ffffff;
 }
 
+button,
+i,
+svg {
+  cursor: pointer;
+}
+
 /* Hide scrollbar for Chrome, Safari, and Edge */
 .no-scrollbar::-webkit-scrollbar {
   display: none;

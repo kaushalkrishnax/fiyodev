@@ -17,7 +17,7 @@ const SideNav = () => {
   const { isAudioPlaying } = useContext(MusicContext);
   const { userInfo } = useContext(UserContext);
   return (
-    <div className="flex flex-col items-center xl:items-start left-0 top-0 sticky w-20 xl:w-80 xl:pl-6  gap-8 py-4 border-r border-gray-300 dark:border-gray-800 h-screen text-black dark:text-white bg-body-bg dark:bg-body-bg-dark overflow-y-auto no-scrollbar">
+    <div className="flex flex-col items-center xl:items-start left-0 top-0 sticky w-20 xl:w-80 xl:pl-6 gap-8 py-4 shadow-xl shadow-gray-700 h-screen bg-body-bg dark:bg-body-bg-dark overflow-y-auto no-scrollbar">
       <div className="flex items-center justify-center xl:justify-start">
         <img
           src="https://cdnfiyo.github.io/img/logos/flexiyo.png"

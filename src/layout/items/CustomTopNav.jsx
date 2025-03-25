@@ -21,7 +21,7 @@ const CustomTopNav = ({
     <div
       className={`flex flex-col ${
         keepBorder && "border-b"
-      } border-gray-300 dark:border-gray-800 bg-body-bg dark:bg-body-bg-dark w-full sticky top-0 z-50 ${className}`}
+      } border-gray-300 dark:border-gray-800 bg-body-bg dark:bg-body-bg-dark w-full sticky top-0 z-1 ${className}`}
       style={{ height: customTabsHeight }}
     >
       <div className="flex flex-row items-center h-[70px] w-full px-4 gap-4 cursor-pointer">
