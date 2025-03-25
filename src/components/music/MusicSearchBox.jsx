@@ -45,20 +45,7 @@ const SearchBox = ({
     }
 
     try {
-      let response;
-      try {
-        response = await fetch(
-          `/api/youtube?term=${encodeURIComponent(value)}`
-        );
-      } catch (error) {
-        if (error.status === 403) {
-          response = await fetch(
-            `/api/youtube1?term=${encodeURIComponent(value)}`
-          );
-        } else {
-          throw error;
-        }
-      }
+      const response = await fetch(`/api/youtube?term=${encodeURIComponent(value)}`);
       if (!response.ok) {
         throw new Error("Failed to fetch suggestions");
       }
