@@ -122,14 +122,7 @@ const AudioProgressBar = ({
             className="absolute left-0 top-0 h-full bg-green-500 rounded-full"
             style={{ width: `${progressPercentage}%` }}
           >
-            <div
-              className="absolute -right-2 top-1/2 -translate-y-1/2 
-                w-3 h-3 bg-green-500 rounded-full 
-                opacity-0 group-hover:opacity-100 
-                scale-0 group-hover:scale-100 
-                transition-all duration-200 ease-in-out 
-                shadow-md group-hover:shadow-lg"
-            />
+            <div className="absolute -right-2 top-1/2 -translate-y-1/2 w-3 h-3 bg-green-500 rounded-full shadow-md group-hover:shadow-lg" />
           </div>
         </div>
       </div>

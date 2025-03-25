@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect, useContext } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import { Music4Icon } from "lucide-react";
 import CustomTopNav from "../layout/items/CustomTopNav";
 import MusicContext from "../context/items/MusicContext";
@@ -20,17 +21,61 @@ const Music = () => {
     seekTo,
   } = useContext(MusicContext);
 
-  const [tracks, setTracks] = useState([]);
+  const location = useLocation();
+  const navigate = useNavigate();
 
+  const [tracks, setTracks] = useState([]);
   const [isSearchBoxActive, setIsSearchBoxActive] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const searchBoxRef = useRef(null);
 
+  /** Live Params Modifier */
+  useEffect(() => {
+    const queryParams = new URLSearchParams(location.search);
+
+    if (currentTrack?.id) {
+      queryParams.set("track", currentTrack.id);
+    } else {
+      queryParams.delete("track");
+    }
+
+    navigate({ search: queryParams.toString() }, { replace: true });
+  }, [searchQuery, currentTrack?.id]);
+
+  /** Query Params */
+  useEffect(() => {
+    const fetchTrackData = async () => {
+      const queryParams = new URLSearchParams(location.search);
+      const q = queryParams.get("q");
+      const trackParam = queryParams.get("track");
+
+      if (trackParam) {
+        try {
+          await getTrack(trackParam);
+        } catch (error) {
+          console.error("Error fetching track data:", error);
+        }
+      }
+
+      if (q) {
+        setSearchQuery(q);
+        handleSearch(q);
+      }
+    };
+
+    fetchTrackData();
+  }, [location.search]);
+
   /** Top Tracks */
   useEffect(() => {
     if (!searchQuery) {
-      getTopTracks().then((tracks) => setTracks(tracks));
+      setIsLoading(true);
+      getTopTracks().then((tracks) => {
+        tracks.sort(() => 0.5 - Math.random());
+        setTracks(tracks);
+        setIsLoading(false);
+      });
     }
   }, [searchQuery]);
 
@@ -58,6 +103,8 @@ const Music = () => {
       setIsLoading(false);
     }
   };
+
+  /** Key Press */
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA")
@@ -171,7 +218,6 @@ const Music = () => {
                   Play #1 track
                 </button>
               </div>
-              1
             </div>
           )}
         </div>

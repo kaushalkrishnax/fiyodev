@@ -48,14 +48,7 @@ const SearchBox = ({
       const response = await fetch(
         `https://fiyodev.vercel.app/api/youtube?term=${encodeURIComponent(
           value
-        )}`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          mode: "no-cors",
-        }
+        )}`
       );
       if (!response.ok) {
         throw new Error("Failed to fetch suggestions");
@@ -94,12 +87,16 @@ const SearchBox = ({
 
   return (
     <div className="h-full w-full">
-      <div
+      <form
         ref={searchRef}
         className={`flex flex-row items-center w-full bg-secondary-bg dark:bg-secondary-bg-dark pl-2 rounded-t-2xl ${
           !searchSuggestions.length > 0 ? "rounded-b-2xl" : ""
         } transition-shadow`}
         role="search"
+        onSubmit={(e) => {
+          e.preventDefault();
+          handleSearch(searchQuery);
+        }}
       >
         <input
           type="text"
@@ -111,8 +108,18 @@ const SearchBox = ({
           placeholder="Search for songs, artists, or albums"
           aria-label="Search music"
           autoFocus
+          name="search"
         />
         <div className="flex items-center p-2">
+          <button
+            onClick={() => setSearchQuery("")}
+            className="flex justify-center px-2 py-1 text-gray-400 rounded-full cursor-pointer"
+            aria-label="Clear search"
+            title="Clear"
+            type="button"
+          >
+            Clear
+          </button>
           <button
             onClick={closeSearchBox}
             className="flex justify-center px-2 py-1 bg-red-500 text-white rounded-full cursor-pointer"
@@ -123,7 +130,7 @@ const SearchBox = ({
             <i className="fa fa-times text-xl" aria-hidden="true" />
           </button>
         </div>
-      </div>
+      </form>
       {searchQuery && searchSuggestions.length > 0 && (
         <div
           className="fixed flex-1 bg-secondary-bg dark:bg-secondary-bg-dark border-t-1 border-gray-700 rounded-b-lg shadow-md shadow-gray-200 dark:shadow-gray-800 z-50 max-h-96 overflow-y-auto"
