@@ -45,7 +45,11 @@ const SearchBox = ({
     }
 
     try {
-      const response = await fetch(`/api/youtube?term=${encodeURIComponent(value)}`);
+      const response = await fetch(
+        `https://fiyodev.vercel.app/api/youtube?term=${encodeURIComponent(
+          value
+        )}`
+      );
       if (!response.ok) {
         throw new Error("Failed to fetch suggestions");
       }
@@ -134,11 +138,15 @@ const SearchBox = ({
                     aria-hidden="true"
                   />
                   <span className="text-gray-800 dark:text-gray-200 truncate">
-                    {item?.suggestionText?.map((part, i) => (
-                      <span key={i} className={part?.bold ? "font-bold" : ""}>
-                        {part?.text || ""}
-                      </span>
-                    ))}
+                    <span className="font-bold">
+                      {item?.suggestionText || ""}
+                    </span>
+                    <span className="text-gray-500 dark:text-gray-400">
+                      {item?.suggestionQuery?.replace(
+                        item?.suggestionText,
+                        ""
+                      ) || ""}
+                    </span>
                   </span>
                 </div>
               </button>
