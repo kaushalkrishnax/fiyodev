@@ -48,7 +48,14 @@ const SearchBox = ({
       const response = await fetch(
         `https://fiyodev.vercel.app/api/youtube?term=${encodeURIComponent(
           value
-        )}`
+        )}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          mode: "no-cors",
+        }
       );
       if (!response.ok) {
         throw new Error("Failed to fetch suggestions");
