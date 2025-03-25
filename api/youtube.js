@@ -8,34 +8,51 @@ export default async function handler(req, res) {
   }
 
   const { term } = req.query;
-  if (!term) return res.status(400).json({ error: "Missing search term" });
 
   try {
     const response = await fetch(
-      `https://clients1.google.com/complete/search?client=youtubemusic&hl=en&ds=yt&q=${encodeURIComponent(
-        term
-      )}`
+      "https://music.youtube.com/youtubei/v1/music/get_search_suggestions",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          input: term,
+          context: {
+            client: {
+              clientName: "WEB_REMIX",
+              clientVersion: "1.2025011",
+            },
+          },
+        }),
+      }
     );
 
-    const textData = await response.text();
-    const jsonData = JSON.parse(textData.match(/\[.*\]/)[0]);
+    const data = await response.json();
 
-    const suggestions = jsonData[1].map((suggestion) => ({
-      suggestionText: highlightMatchingText(suggestion, term),
-      suggestionQuery: suggestion,
-    }));
+    delete data?.responseContext;
+    delete data?.trackingParams;
+    delete data?.contents[1];
+
+    const suggestions = [];
+
+    const suggestionContents =
+      data?.contents[0]?.searchSuggestionsSectionRenderer?.contents;
+
+    suggestionContents?.forEach((content) => {
+      const suggestionText =
+        content?.searchSuggestionRenderer?.suggestion?.runs;
+      const suggestionQuery =
+        content?.searchSuggestionRenderer?.navigationEndpoint?.searchEndpoint
+          ?.query;
+
+      suggestions.push({ suggestionText, suggestionQuery });
+    });
 
     res.status(200).json(suggestions);
   } catch (error) {
     console.error("Error fetching suggestions:", error);
     res.status(500).json({ error: error.message });
   }
-}
-
-function highlightMatchingText(text, term) {
-  const regex = new RegExp(`(${term})`, "gi");
-  return text.split(regex).map((part, i) => ({
-    text: part,
-    bold: part.toLowerCase() === term.toLowerCase(),
-  }));
 }
