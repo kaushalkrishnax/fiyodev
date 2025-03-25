@@ -45,11 +45,20 @@ const SearchBox = ({
     }
 
     try {
-      const response = await fetch(
-        `https://fiyodev.vercel.app/api/youtube?term=${encodeURIComponent(
-          value
-        )}`
-      );
+      let response;
+      try {
+        response = await fetch(
+          `/api/youtube?term=${encodeURIComponent(value)}`
+        );
+      } catch (error) {
+        if (error.status === 403) {
+          response = await fetch(
+            `/api/youtube1?term=${encodeURIComponent(value)}`
+          );
+        } else {
+          throw error;
+        }
+      }
       if (!response.ok) {
         throw new Error("Failed to fetch suggestions");
       }
