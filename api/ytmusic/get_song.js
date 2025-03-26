@@ -7,22 +7,10 @@ export default async function handler(req, res) {
     return res.status(200).end();
   }
 
-  const { videoId, contentQuality } = req.query;
+  const { videoId } = req.query;
   if (!videoId) return res.status(400).json({ error: "Missing video ID" });
 
   try {
-    let qualityIndex = 0;
-    switch (contentQuality) {
-      case "low":
-        qualityIndex = 4;
-        break;
-      case "normal":
-        qualityIndex = 1;
-        break;
-      default:
-        qualityIndex = 0;
-    }
-
     const checkResponse = await fetch("https://cnvmp3.com/check_database.php", {
       method: "POST",
       headers: {
@@ -30,7 +18,7 @@ export default async function handler(req, res) {
       },
       body: JSON.stringify({
         youtube_id: videoId,
-        quality: qualityIndex,
+        quality: 1,
         formatValue: 1,
       }),
     });
@@ -54,7 +42,7 @@ export default async function handler(req, res) {
         },
         body: JSON.stringify({
           url: `https://www.youtube.com/watch?v=${videoId}`,
-          quality: qualityIndex,
+          quality: 1,
           formatValue: 1,
           title: checkData.data.title,
         }),
@@ -78,7 +66,7 @@ export default async function handler(req, res) {
       body: JSON.stringify({
         server_path: link,
         formatValue: 1,
-        quality: qualityIndex,
+        quality: 1,
         title: checkData.data.title,
         youtube_id: videoId,
       }),

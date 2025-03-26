@@ -97,7 +97,7 @@ const useMusicUtils = ({
     setIsAudioLoading(true);
     try {
       const fetchedTrackData = await fetch(
-        `https://fiyodev.vercel.app/api/ytmusic/get_song?videoId=${videoId}&contentQuality=${contentQuality}`
+        `https://fiyodev.vercel.app/api/ytmusic/get_song?videoId=${videoId}`
       ).then((res) => res.json());
       if (!fetchedTrackData) return console.error("Error fetching track data");
 
