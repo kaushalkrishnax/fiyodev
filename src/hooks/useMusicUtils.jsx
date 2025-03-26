@@ -104,7 +104,7 @@ const useMusicUtils = ({
       const { link } = fetchedTrackData;
 
       const response = await fetch(
-        `https://fiyodev.vercel.app/api/get_song_stream?link=${encodeURIComponent(link)}`
+        `https://fiyodev.vercel.app/api/ytmusic/get_song_stream?link=${encodeURIComponent(link)}`
       );
       const blob = await response.blob();
       const blobUrl = URL.createObjectURL(blob);
