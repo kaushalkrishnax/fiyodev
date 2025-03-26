@@ -67,7 +67,7 @@ const TrackList = memo(({ tracks, loading }) => {
     <div className="h-screen w-full overflow-y-auto no-scrollbar pb-8">
       {tracks?.length > 0 &&
         tracks?.map((track) => (
-          <TrackItem key={track?.id} track={track} loading={loading} />
+          <TrackItem key={track?.id || track?.videoId} track={track} loading={loading} />
         ))}
     </div>
   );

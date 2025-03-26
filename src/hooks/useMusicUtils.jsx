@@ -105,16 +105,21 @@ const useMusicUtils = ({
         return;
       }
 
-      const link = `https://fiyodev.vercel.app/api/ytmusic/get_song_stream?link=${encodeURIComponent(
-        fetchedTrackData.link
-      )}`;
+      const response = await fetch(
+        `https://fiyodev.vercel.app/api/ytmusic/get_song_stream?link=${encodeURIComponent(
+          fetchedTrackData.link
+        )}`
+      );
+
+      const blob = await response.blob();
+      const blobUrl = URL.createObjectURL(blob);
 
       setCurrentTrack({
         videoId,
         name,
         artists,
         image,
-        link,
+        link: blobUrl,
       });
 
       setPreviouslyPlayedTracks((prevTracks) => [...prevTracks, videoId]);

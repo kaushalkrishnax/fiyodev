@@ -89,7 +89,8 @@ export const MusicProvider = ({ children }) => {
   }, [isAudioPlaying, loopAudio, isPlayerReady, isHandlingNextAudioTrack]);
 
   useEffect(() => {
-    if (!currentTrack?.id || !currentTrack?.link) return;
+    if (!(currentTrack?.id || currentTrack?.videoId) || !currentTrack?.link)
+      return;
 
     const playAudio = async () => {
       try {

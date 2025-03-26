@@ -45,6 +45,8 @@ export default async function handler(req, res) {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Referer: "https://cnvmp3.com/",
+          Origin: "https://cnvmp3.com",
         },
         body: JSON.stringify({
           url: `https://www.youtube.com/watch?v=${videoId}`,
