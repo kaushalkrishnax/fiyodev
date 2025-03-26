@@ -56,7 +56,7 @@ const TrackItem = memo(({ track, loading }) => {
 
 const TrackList = memo(({ tracks, loading }) => {
   return (
-    <div className="h-screen w-full overflow-y-auto no-scrollbar">
+    <div className="h-screen w-full overflow-y-auto no-scrollbar pb-8">
       {tracks.length > 0 &&
         tracks?.map((track) => (
           <TrackItem key={track?.id} track={track} loading={loading} />
