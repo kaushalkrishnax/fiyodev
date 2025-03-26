@@ -1,6 +1,3 @@
-import fetch from "node-fetch";
-import { Readable } from "stream";
-
 export default async function handler(req, res) {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
@@ -28,7 +25,9 @@ export default async function handler(req, res) {
 
     const checkResponse = await fetch("https://cnvmp3.com/check_database.php", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+      },
       body: JSON.stringify({
         youtube_id: videoId,
         quality: qualityIndex,
@@ -38,53 +37,57 @@ export default async function handler(req, res) {
 
     const checkData = await checkResponse.json();
 
-    let mp3Url;
     if (checkData.success) {
-      mp3Url = checkData.data.server_path;
-    } else {
-      const downloadResponse = await fetch("https://cnvmp3.com/download_video_ucep.php", {
+      res.status(200).json({
+        videoId,
+        link: checkData.data.server_path,
+      });
+      return;
+    }
+
+    const downloadResponse = await fetch(
+      "https://cnvmp3.com/download_video_ucep.php",
+      {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify({
           url: `https://www.youtube.com/watch?v=${videoId}`,
           quality: qualityIndex,
           formatValue: 1,
-          title: checkData.data?.title || "Unknown Title",
+          title: checkData.data.title,
         }),
-      });
-
-      const downloadData = await downloadResponse.json();
-      if (!downloadData.success) {
-        return res.status(500).json({ error: "Failed to download MP3" });
       }
+    );
 
-      mp3Url = downloadData.download_link;
+    const downloadData = await downloadResponse.json();
 
-      await fetch("https://cnvmp3.com/insert_to_database.php", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          server_path: mp3Url,
-          formatValue: 1,
-          quality: qualityIndex,
-          title: checkData.data?.title || "Unknown Title",
-          youtube_id: videoId,
-        }),
-      });
+    if (!downloadData.success) {
+      console.error(`Failed to download MP3 for ${checkData.data.title}`);
+      return res.status(500).json({ error: "Failed to download MP3" });
     }
 
-    const mp3Response = await fetch(mp3Url, {
-      headers: { Referer: "https://cnvmp3.com/" },
+    const link = downloadData.download_link;
+
+    await fetch("https://cnvmp3.com/insert_to_database.php", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        server_path: link,
+        formatValue: 1,
+        quality: qualityIndex,
+        title: checkData.data.title,
+        youtube_id: videoId,
+      }),
     });
 
-    if (!mp3Response.ok) throw new Error("Failed to fetch MP3 stream");
-
-    const nodeStream = Readable.from(mp3Response.body);
-
-    res.setHeader("Content-Type", "audio/mpeg");
-    res.setHeader("Content-Disposition", `inline; filename="${videoId}.mp3"`);
-
-    nodeStream.pipe(res);
+    res.status(200).json({
+      videoId,
+      link,
+    });
   } catch (error) {
     console.error("YT Music Get Song API error:", error);
     res.status(500).json({ error: error.message });
