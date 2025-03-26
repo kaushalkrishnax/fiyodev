@@ -33,6 +33,12 @@ export default async function handler(req, res) {
       return;
     }
 
+    const songData = await fetch(
+      `https://www.youtube.com/oembed?format=json&url=https://www.youtube.com/watch?v=${videoId}`
+    ).then((res) => res.json());
+
+    const { title } = songData;
+
     const downloadResponse = await fetch(
       "https://cnvmp3.com/download_video_ucep.php",
       {
@@ -44,7 +50,7 @@ export default async function handler(req, res) {
           url: `https://www.youtube.com/watch?v=${videoId}`,
           quality: 1,
           formatValue: 1,
-          title: checkData.data.title,
+          title,
         }),
       }
     );
@@ -52,7 +58,7 @@ export default async function handler(req, res) {
     const downloadData = await downloadResponse.json();
 
     if (!downloadData.success) {
-      console.error(`Failed to download MP3 for ${checkData.data.title}`);
+      console.error(`Failed to download MP3 for ${title}`);
       return res.status(500).json({ error: "Failed to download MP3" });
     }
 
@@ -67,7 +73,7 @@ export default async function handler(req, res) {
         server_path: link,
         formatValue: 1,
         quality: 1,
-        title: checkData.data.title,
+        title,
         youtube_id: videoId,
       }),
     });
