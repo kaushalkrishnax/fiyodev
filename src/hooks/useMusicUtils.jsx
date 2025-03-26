@@ -106,8 +106,8 @@ const useMusicUtils = ({
       }
 
       const link = `https://fiyodev.vercel.app/api/ytmusic/get_song_stream?link=${encodeURIComponent(
-          link
-        )}`
+        fetchedTrackData.link
+      )}`;
 
       setCurrentTrack({
         videoId,
