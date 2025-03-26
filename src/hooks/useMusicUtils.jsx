@@ -99,15 +99,25 @@ const useMusicUtils = ({
       const fetchedTrackData = await fetch(
         `https://fiyodev.vercel.app/api/ytmusic/get_song?videoId=${videoId}`
       ).then((res) => res.json());
-      if (!fetchedTrackData) return console.error("Error fetching track data");
+
+      if (!fetchedTrackData) {
+        console.error("Error fetching track data");
+        return;
+      }
 
       const { link } = fetchedTrackData;
 
       const response = await fetch(
-        `https://fiyodev.vercel.app/api/ytmusic/get_song_stream?link=${encodeURIComponent(link)}`
+        `https://fiyodev.vercel.app/api/ytmusic/get_song_stream?link=${encodeURIComponent(
+          link
+        )}`
       );
-      const blob = await response.blob();
-      const blobUrl = URL.createObjectURL(blob);
+
+      const arrayBuffer = await response.arrayBuffer();
+      const blob = new Blob([arrayBuffer], {
+        type: response.headers.get("content-type"),
+      });
+      const blobUrl = URL.createObjectURL(blob); 
 
       setCurrentTrack({
         videoId,
@@ -116,6 +126,7 @@ const useMusicUtils = ({
         image,
         link: blobUrl,
       });
+
       setPreviouslyPlayedTracks((prevTracks) => [...prevTracks, videoId]);
     } catch (error) {
       console.error(`Error in getAdvancedTrack: ${error}`);
