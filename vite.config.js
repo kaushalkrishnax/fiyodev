@@ -35,7 +35,6 @@ export default defineConfig({
     }),
   ],
   base: "/",
-  assetsInclude: "**/*.html",
   server: {
     port: 3000,
     host: true,
