@@ -15,6 +15,6 @@ export default async function handler(req, res) {
     res.setHeader("Content-Type", response.headers["content-type"]);
     response.data.pipe(res);
   } catch (error) {
-    res.status(500).json({ error: "Failed to fetch the file" });
+    res.status(500).json({ error: "Failed to fetch the file", stackTrace: error });
   }
 }
