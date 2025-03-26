@@ -9,7 +9,7 @@ const TrackItem = memo(({ track, loading }) => {
     if (track?.videoId) {
       await getAdvancedTrack(track?.videoId, {
         name: track?.name,
-        artists: track?.artists?.primary,
+        artists: track?.artists,
         image: track?.image[1]?.url,
       });
     } else {
