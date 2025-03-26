@@ -6,7 +6,6 @@ export default async function handler(req, res) {
     const response = await fetch(link, {
       headers: {
         Referer: "https://cnvmp3.com/",
-        "User-Agent": "Mozilla/5.0",
         Origin: "https://cnvmp3.com",
       },
       responseType: "stream",
