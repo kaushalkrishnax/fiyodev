@@ -14,31 +14,13 @@ export default async function handler(req, res) {
       return res.status(500).json({ error: "Failed to fetch the file" });
     }
 
-    res.setHeader(
-      "Content-Type",
-      mp3Response.headers.get("content-type") || "audio/mpeg"
-    );
-    res.setHeader("Content-Disposition", "attachment; filename=song.mp3");
+    const buffer = await mp3Response.arrayBuffer();
 
-    const reader = mp3Response.body.getReader();
-    const stream = new ReadableStream({
-      async start(controller) {
-        while (true) {
-          const { done, value } = await reader.read();
-          if (done) break;
-          controller.enqueue(value);
-        }
-        controller.close();
-      },
-    });
-
-    return new Response(stream, {
-      headers: { "Content-Type": "audio/mpeg" },
-    }).body.pipeTo(res);
+    res.setHeader("Content-Type", mp3Response.headers.get("content-type") || "audio/mpeg");
+    res.setHeader("Content-Disposition", 'attachment; filename="song.mp3"');
+    res.send(Buffer.from(buffer));
   } catch (error) {
-    console.error("Stream error:", error);
-    res
-      .status(500)
-      .json({ error: "Failed to fetch the file", stackTrace: error.message });
+    console.error("Error fetching MP3:", error);
+    res.status(500).json({ error: "Failed to fetch the file", stackTrace: error.message });
   }
 }
