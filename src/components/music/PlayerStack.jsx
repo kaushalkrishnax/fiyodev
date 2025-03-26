@@ -30,16 +30,8 @@ const PlayerStack = () => {
     setIsTrackDeckOpen(false);
   };
 
-  useEffect(() => {
-    if (currentTrack?.isExternal) {
-      setTimeout(() => {
-        openTrackDeck();
-      }, 500);
-    }
-  }, [currentTrack?.isExternal]);
-
   return (
-    currentTrack?.id || currentTrack?.videoId &&
+    (currentTrack?.id || currentTrack?.videoId) &&
     isTablet && (
       <div className="relative z-10 flex justify-center">
         <Sheet

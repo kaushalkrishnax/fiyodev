@@ -1,19 +1,25 @@
-import { memo, useContext } from "react";
+import { memo, useContext, useState } from "react";
 import { motion } from "framer-motion";
 import MusicContext from "../../context/items/MusicContext";
 
 const TrackItem = memo(({ track, loading }) => {
   const { getTrack, getAdvancedTrack } = useContext(MusicContext);
 
+  const [trackLoading, setTrackLoading] = useState(false);
+
   const handleClick = async () => {
     if (track?.videoId) {
+      setTrackLoading(true);
       await getAdvancedTrack(track?.videoId, {
         name: track?.name,
         artists: track?.artists,
         image: track?.image[1]?.url,
       });
+      setTrackLoading(false);
     } else {
+      setTrackLoading(true);
       await getTrack(track?.id);
+      setTrackLoading(false);
     }
   };
 
@@ -35,7 +41,9 @@ const TrackItem = memo(({ track, loading }) => {
       ) : (
         <>
           <motion.img
-            className="w-16 h-16 rounded-md dark:bg-gray-700 bg-gray-200 object-cover"
+            className={`w-16 h-16 rounded-md dark:bg-gray-700 bg-gray-200 object-cover ${
+              trackLoading && "animate-pulse"
+            }`}
             src={track?.image[1]?.url}
             alt="Track"
             initial={{ scale: 0.9, opacity: 0 }}
