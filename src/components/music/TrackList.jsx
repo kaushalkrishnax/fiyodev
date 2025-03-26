@@ -28,7 +28,7 @@ const TrackItem = memo(({ track, loading }) => {
         <>
           <motion.img
             className="w-16 h-16 rounded-md dark:bg-gray-700 bg-gray-200 object-cover"
-            src={track?.image[1].url}
+            src={track?.image[1]?.url}
             alt="Track"
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}

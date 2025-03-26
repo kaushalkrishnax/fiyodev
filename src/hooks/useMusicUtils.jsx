@@ -33,7 +33,7 @@ const useMusicUtils = ({
   const advancedSearchTracks = async (query, continuation = null) => {
     try {
       const { data } = await axios.get(
-        `https://fiyodev.vercel.app/api/search_songs?term=${encodeURIComponent(
+        `https://fiyodev.vercel.app/api/ytmusic/search_songs?term=${encodeURIComponent(
           query
         )}&${continuation ? `&continuation=${continuation}` : ""}`
       );

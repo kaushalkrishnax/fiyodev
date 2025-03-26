@@ -14,6 +14,7 @@ const Music = () => {
     handleAudioPause,
     handleNextAudioTrack,
     searchTracks,
+    advancedSearchTracks,
     getTopTracks,
     currentTrack,
     isAudioPlaying,
@@ -27,7 +28,6 @@ const Music = () => {
   const [tracks, setTracks] = useState([]);
   const [isSearchBoxActive, setIsSearchBoxActive] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [advSearchContinuation, setAdvSearchContinuation] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const searchBoxRef = useRef(null);
 
@@ -97,12 +97,9 @@ const Music = () => {
     setIsLoading(true);
     try {
       const data = await (advanced
-        ? advancedSearchTracks(query, advSearchContinuation)
+        ? advancedSearchTracks(query)
         : searchTracks(query));
       setTracks(data?.results);
-      if (advanced) {
-        setAdvSearchContinuation(data?.continuation);
-      }
     } catch (error) {
       console.error("Error performing search:", error);
     } finally {
