@@ -59,7 +59,7 @@ export default async function handler(req, res) {
       try {
         if (!song?.playlistItemData?.videoId) continue;
 
-        const id = song?.playlistItemData?.videoId;
+        const videoId = song?.playlistItemData?.videoId;
         const image =
           song?.thumbnail?.musicThumbnailRenderer?.thumbnail?.thumbnails;
         const name =
@@ -74,7 +74,7 @@ export default async function handler(req, res) {
             ?.runs?.[0]?.text;
 
         songs.push({
-          id,
+          videoId,
           name,
           artists,
           playsCount,

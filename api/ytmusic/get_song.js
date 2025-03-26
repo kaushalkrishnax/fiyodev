@@ -7,8 +7,8 @@ export default async function handler(req, res) {
     return res.status(200).end();
   }
 
-  const { id, contentQuality } = req.query;
-  if (!id) return res.status(400).json({ error: "Missing video ID" });
+  const { videoId, contentQuality } = req.query;
+  if (!videoId) return res.status(400).json({ error: "Missing video ID" });
 
   try {
     let qualityIndex = 0;
@@ -29,7 +29,7 @@ export default async function handler(req, res) {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        youtube_id: id,
+        youtube_id: videoId,
         quality: qualityIndex,
         formatValue: 1,
       }),
@@ -39,11 +39,7 @@ export default async function handler(req, res) {
 
     if (checkData.success) {
       res.status(200).json({
-        id,
-        name: checkData.data.title,
-        artists: [],
-        playsCount: 0,
-        image: checkData.data.thumbnail,
+        videoId,
         link: checkData.data.server_path,
       });
       return;
@@ -57,7 +53,7 @@ export default async function handler(req, res) {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          url: `https://www.youtube.com/watch?v=${id}`,
+          url: `https://www.youtube.com/watch?v=${videoId}`,
           quality: qualityIndex,
           formatValue: 1,
           title: checkData.data.title,
@@ -84,12 +80,12 @@ export default async function handler(req, res) {
         formatValue: 1,
         quality: qualityIndex,
         title: checkData.data.title,
-        youtube_id: id,
+        youtube_id: videoId,
       }),
     });
 
     res.status(200).json({
-      id,
+      videoId,
       link,
     });
   } catch (error) {

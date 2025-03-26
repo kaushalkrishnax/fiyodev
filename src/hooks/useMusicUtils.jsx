@@ -98,14 +98,23 @@ const useMusicUtils = ({
     try {
       const fetchedTrackData = await fetch(
         `https://fiyodev.vercel.app/api/ytmusic/get_song?id=${videoId}&contentQuality=${contentQuality}`
-      );
+      ).then((res) => res.json());
       if (!fetchedTrackData) return console.error("Error fetching track data");
 
+      const { link } = fetchedTrackData;
+
+      const response = await fetch(link, {
+        headers: { Referer: "https://cnvmp3.com" },
+      });
+      const blob = await response.blob();
+      const blobUrl = URL.createObjectURL(blob);
+
       setCurrentTrack({
-        ...fetchedTrackData,
+        videoId,
         name,
         artists,
         image,
+        link: blobUrl,
       });
       setPreviouslyPlayedTracks((prevTracks) => [...prevTracks, videoId]);
     } catch (error) {
