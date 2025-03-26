@@ -212,7 +212,7 @@ const Music = () => {
           </div>
         </div>
         <div className="flex-1 hidden lg:block bg-gradient-to-b lg:min-w-5/12">
-          {currentTrack?.id ? (
+          {currentTrack?.id || currentTrack?.videoId ? (
             <TrackDeck />
           ) : (
             <div className="w-full hidden lg:min-w-1/2 lg:block">
