@@ -35,7 +35,9 @@ const useMusicUtils = ({
       const { data } = await axios.get(
         `https://fiyodev.vercel.app/api/ytmusic/search_songs?term=${encodeURIComponent(
           query
-        )}&${continuation ? `&continuation=${continuation}` : ""}`
+        )}&${
+          continuation ? `&continuation=${continuation}` : ""
+        }&contentQuality=${contentQuality}`
       );
       return data.data;
     } catch (error) {
@@ -85,6 +87,29 @@ const useMusicUtils = ({
       setPreviouslyPlayedTracks((prevTracks) => [...prevTracks, trackId]);
     } catch (error) {
       console.error(`Error in getTrack: ${error}`);
+    } finally {
+      setIsAudioLoading(false);
+    }
+  };
+
+  /** Get Advanced Track */
+  const getAdvancedTrack = async (videoId, { name, artists, image }) => {
+    setIsAudioLoading(true);
+    try {
+      const fetchedTrackData = await fetch(
+        `https://fiyodev.vercel.app/api/ytmusic/get_song?id=${videoId}&contentQuality=${contentQuality}`
+      );
+      if (!fetchedTrackData) return console.error("Error fetching track data");
+
+      setCurrentTrack({
+        ...fetchedTrackData,
+        name,
+        artists,
+        image,
+      });
+      setPreviouslyPlayedTracks((prevTracks) => [...prevTracks, videoId]);
+    } catch (error) {
+      console.error(`Error in getAdvancedTrack: ${error}`);
     } finally {
       setIsAudioLoading(false);
     }
@@ -164,6 +189,7 @@ const useMusicUtils = ({
     advancedSearchTracks,
     getTrackData,
     getTrack,
+    getAdvancedTrack,
     getTopTracks,
     getSuggestedTrackId,
     handleAudioPlay,

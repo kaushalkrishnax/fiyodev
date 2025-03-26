@@ -2,11 +2,19 @@ import { memo, useContext } from "react";
 import { motion } from "framer-motion";
 import MusicContext from "../../context/items/MusicContext";
 
-const TrackItem = memo(({ track, loading }) => {
-  const { getTrack } = useContext(MusicContext);
+const TrackItem = memo(({ track, loading, advanced }) => {
+  const { getTrack, getAdvancedTrack } = useContext(MusicContext);
 
   const handleClick = async () => {
-    await getTrack(track?.id);
+    if (advanced) {
+      await getAdvancedTrack(track?.id, {
+        name: track?.name,
+        artists: track?.artists?.primary,
+        image: track?.image[1]?.url,
+      });
+    } else {
+      await getTrack(track?.id);
+    }
   };
 
   return (
@@ -54,12 +62,17 @@ const TrackItem = memo(({ track, loading }) => {
   );
 });
 
-const TrackList = memo(({ tracks, loading }) => {
+const TrackList = memo(({ tracks, loading, advanced = false }) => {
   return (
     <div className="h-screen w-full overflow-y-auto no-scrollbar pb-8">
       {tracks.length > 0 &&
         tracks?.map((track) => (
-          <TrackItem key={track?.id} track={track} loading={loading} />
+          <TrackItem
+            key={track?.id}
+            track={track}
+            loading={loading}
+            advanced={advanced}
+          />
         ))}
     </div>
   );

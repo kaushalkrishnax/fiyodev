@@ -56,93 +56,22 @@ export default async function handler(req, res) {
 
     for (const { musicResponsiveListItemRenderer: song } of songContents ||
       []) {
-      if (!song?.playlistItemData?.videoId) continue;
-
-      const id = song?.playlistItemData?.videoId;
-      const image =
-        song?.thumbnail?.musicThumbnailRenderer?.thumbnail?.thumbnails;
-      const name =
-        song?.flexColumns[0]?.musicResponsiveListItemFlexColumnRenderer?.text
-          ?.runs?.[0]?.text;
-      const artists =
-        song?.flexColumns[1]?.musicResponsiveListItemFlexColumnRenderer?.text?.runs
-          ?.map((run) => run?.text)
-          .join("");
-      const playsCount =
-        song?.flexColumns[2]?.musicResponsiveListItemFlexColumnRenderer?.text
-          ?.runs?.[0]?.text;
-
       try {
-        const qualityIndex =
-          contentQuality === "low" ? 4 : contentQuality === "normal" ? 1 : 0;
+        if (!song?.playlistItemData?.videoId) continue;
 
-        const checkResponse = await fetch(
-          "https://cnvmp3.com/check_database.php",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              youtube_id: id,
-              quality: qualityIndex,
-              formatValue: 1,
-            }),
-          }
-        );
-
-        const checkData = await checkResponse.json();
-
-        if (checkData.success) {
-          songs.push({
-            id,
-            name,
-            artists,
-            playsCount,
-            image,
-            link: checkData.data.server_path,
-          });
-          continue;
-        }
-
-        const downloadResponse = await fetch(
-          "https://cnvmp3.com/download_video_ucep.php",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              url: `https://www.youtube.com/watch?v=${id}`,
-              quality: qualityIndex,
-              formatValue: 1,
-              title: name,
-            }),
-          }
-        );
-
-        const downloadData = await downloadResponse.json();
-
-        if (!downloadData.success) {
-          console.error(`Failed to download MP3 for ${name}`);
-          continue;
-        }
-
-        const link = downloadData.download_link;
-
-        await fetch("https://cnvmp3.com/insert_to_database.php", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            server_path: link,
-            formatValue: 1,
-            quality: qualityIndex,
-            title: name,
-            youtube_id: id,
-          }),
-        });
+        const id = song?.playlistItemData?.videoId;
+        const image =
+          song?.thumbnail?.musicThumbnailRenderer?.thumbnail?.thumbnails;
+        const name =
+          song?.flexColumns[0]?.musicResponsiveListItemFlexColumnRenderer?.text
+            ?.runs?.[0]?.text;
+        const artists =
+          song?.flexColumns[1]?.musicResponsiveListItemFlexColumnRenderer?.text?.runs
+            ?.map((run) => run?.text)
+            .join("");
+        const playsCount =
+          song?.flexColumns[2]?.musicResponsiveListItemFlexColumnRenderer?.text
+            ?.runs?.[0]?.text;
 
         songs.push({
           id,
@@ -150,7 +79,6 @@ export default async function handler(req, res) {
           artists,
           playsCount,
           image,
-          link,
         });
       } catch (error) {
         console.error(`Error processing ${name}:`, error.message);
