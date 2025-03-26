@@ -6,7 +6,7 @@ const TrackItem = memo(({ track, loading }) => {
   const { getTrack } = useContext(MusicContext);
 
   const handleClick = async () => {
-    await getTrack(track.id);
+    await getTrack(track?.id);
   };
 
   return (
@@ -28,7 +28,7 @@ const TrackItem = memo(({ track, loading }) => {
         <>
           <motion.img
             className="w-16 h-16 rounded-md dark:bg-gray-700 bg-gray-200 object-cover"
-            src={track.image[1].url}
+            src={track?.image[1].url}
             alt="Track"
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
@@ -36,11 +36,11 @@ const TrackItem = memo(({ track, loading }) => {
           />
           <div className="flex flex-col px-3 w-2/3">
             <p className="text-md text-start font-medium dark:text-gray-100 text-gray-900 truncate">
-              {track.name.replace(/&quot;/g, '"')}
+              {track?.name.replace(/&quot;/g, '"')}
             </p>
             <p className="text-start text-gray-400 text-xs font-medium truncate">
-              {typeof track.artists === "string"
-                ? track.artists
+              {typeof track?.artists === "string"
+                ? track?.artists
                 : track?.artists?.primary
                     ?.map((artist) => artist.name)
                     .slice(0, 4)
@@ -57,9 +57,10 @@ const TrackItem = memo(({ track, loading }) => {
 const TrackList = memo(({ tracks, loading }) => {
   return (
     <div className="h-screen w-full overflow-y-auto no-scrollbar">
-      {tracks.map((track) => (
-        <TrackItem key={track.id} track={track} loading={loading} />
-      ))}
+      {tracks.length > 0 &&
+        tracks?.map((track) => (
+          <TrackItem key={track?.id} track={track} loading={loading} />
+        ))}
     </div>
   );
 });

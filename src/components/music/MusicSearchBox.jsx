@@ -46,7 +46,7 @@ const SearchBox = ({
 
     try {
       const response = await fetch(
-        `https://fiyodev.vercel.app/api/youtube?term=${encodeURIComponent(
+        `https://fiyodev.vercel.app/api/ytmusic/get_search_suggestions?term=${encodeURIComponent(
           value
         )}`
       );
@@ -105,7 +105,7 @@ const SearchBox = ({
           onChange={(e) => handleSearchChange(e.target.value)}
           onKeyDown={handleKeyPress}
           value={searchQuery}
-          placeholder="Search for songs, artists, or albums"
+          placeholder="Search your fav songs"
           aria-label="Search music"
           autoFocus
           name="search"

@@ -27,6 +27,7 @@ const Music = () => {
   const [tracks, setTracks] = useState([]);
   const [isSearchBoxActive, setIsSearchBoxActive] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [advSearchContinuation, setAdvSearchContinuation] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const searchBoxRef = useRef(null);
 
@@ -90,13 +91,18 @@ const Music = () => {
     setSearchQuery("");
   };
 
-  const handleSearch = async (query) => {
+  const handleSearch = async (query, advanced = false) => {
     if (!query?.trim()) return;
 
     setIsLoading(true);
     try {
-      const data = await searchTracks(query);
+      const data = await (advanced
+        ? advancedSearchTracks(query, advSearchContinuation)
+        : searchTracks(query));
       setTracks(data?.results);
+      if (advanced) {
+        setAdvSearchContinuation(data?.continuation);
+      }
     } catch (error) {
       console.error("Error performing search:", error);
     } finally {
@@ -195,6 +201,15 @@ const Music = () => {
               }
             />
             <div className="flex flex-col px-6 pt-2 gap-4 flex-grow">
+              <p className="text-gray-600 dark:text-gray-400 text-sm">
+                Can't find what you're looking for? &nbsp;
+                <button
+                  className="text-blue-400 underline underline-offset-2"
+                  onClick={() => handleSearch(searchQuery, true)}
+                >
+                  Advanced Search
+                </button>
+              </p>
               <TrackList tracks={tracks} loading={isLoading} />
             </div>
           </div>

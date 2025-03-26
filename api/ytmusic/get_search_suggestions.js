@@ -13,7 +13,6 @@ export default async function handler(req, res) {
   let suggestions = [];
 
   try {
-    // First attempt: YouTube Music API
     const ytMusicResponse = await fetch(
       "https://music.youtube.com/youtubei/v1/music/get_search_suggestions",
       {
@@ -33,7 +32,8 @@ export default async function handler(req, res) {
       }
     );
 
-    if (!ytMusicResponse.ok) throw new Error("YouTube Music API failed");
+    if (!ytMusicResponse.ok)
+      throw new Error("YT Music Search Suggestions API failed");
 
     const ytMusicData = await ytMusicResponse.json();
     const suggestionContents =
@@ -51,9 +51,8 @@ export default async function handler(req, res) {
       }
     });
   } catch (error) {
-    console.error("YouTube Music API error:", error);
+    console.error("YT Music Search Suggestions API error:", error);
   } finally {
     res.status(200).json(suggestions.slice(0, 5));
   }
 }
-

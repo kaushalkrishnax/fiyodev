@@ -14,6 +14,7 @@ const useMusicUtils = ({
 }) => {
   const { contentQuality } = useContext(AppContext);
 
+  /** Search Tracks */
   const searchTracks = async (query) => {
     try {
       const { data } = await axios.get(
@@ -28,6 +29,22 @@ const useMusicUtils = ({
     }
   };
 
+  /** Advanced Search Tracks */
+  const advancedSearchTracks = async (query, continuation = null) => {
+    try {
+      const { data } = await axios.get(
+        `https://fiyodev.vercel.app/api/search_songs?term=${encodeURIComponent(
+          query
+        )}&${continuation ? `&continuation=${continuation}` : ""}`
+      );
+      return data.data;
+    } catch (error) {
+      console.error(`Error advanced searching: ${error}`);
+      return [];
+    }
+  };
+
+  /** Get Track Data */
   const getTrackData = async (trackId) => {
     try {
       const { data } = await axios.get(
@@ -57,6 +74,7 @@ const useMusicUtils = ({
     }
   };
 
+  /** Get Track */
   const getTrack = async (trackId) => {
     setIsAudioLoading(true);
     try {
@@ -72,7 +90,7 @@ const useMusicUtils = ({
     }
   };
 
-  // Get top tracks
+  /** Get top tracks */
   const getTopTracks = async () => {
     try {
       const { data } = await axios.get(
@@ -85,7 +103,7 @@ const useMusicUtils = ({
     }
   };
 
-  // Get suggested track ID
+  /** Get suggested track ID */
   const getSuggestedTrackId = async () => {
     try {
       const { data } = await axios.get(
@@ -111,6 +129,7 @@ const useMusicUtils = ({
     }
   };
 
+  /** Handle Audio Play */
   const handleAudioPlay = async () => {
     const audio = audioRef.current;
     if (!audio) return;
@@ -120,6 +139,7 @@ const useMusicUtils = ({
     setIsAudioPlaying(true);
   };
 
+  /** Handle Audio Pause */
   const handleAudioPause = async () => {
     const audio = audioRef.current;
     if (!audio) return;
@@ -129,6 +149,7 @@ const useMusicUtils = ({
     setIsAudioPlaying(false);
   };
 
+  /** Handle Next Audio Track */
   const handleNextAudioTrack = async () => {
     try {
       const nextTrackId = await getSuggestedTrackId();
@@ -140,6 +161,7 @@ const useMusicUtils = ({
 
   return {
     searchTracks,
+    advancedSearchTracks,
     getTrackData,
     getTrack,
     getTopTracks,
