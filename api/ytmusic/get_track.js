@@ -36,8 +36,10 @@ export default async function handler(req, res) {
     const data = await response.json();
     const { videoDetails, streamingData } = data;
 
+    console.log(data);
+
     if (!streamingData) {
-      throw new Error("No streaming data available.", data);
+      throw new Error("No streaming data available.");
     }
 
     const audioStreams = (streamingData.adaptiveFormats || []).filter(
