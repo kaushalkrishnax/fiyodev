@@ -37,7 +37,7 @@ export default async function handler(req, res) {
     const { videoDetails, streamingData } = data;
 
     if (!streamingData) {
-      throw new Error("No streaming data available.");
+      throw new Error("No streaming data available.", data);
     }
 
     const audioStreams = (streamingData.adaptiveFormats || []).filter(
