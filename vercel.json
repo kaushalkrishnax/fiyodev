@@ -1,11 +1,11 @@
 {
   "rewrites": [
     {
-      "source": "/api/youtube",
-      "destination": "/api/youtube"
+      "source": "/api/ytmusic",
+      "destination": "/api/ytmusic"
     },
     {
-      "source": "/((?!api/youtube).*)",
+      "source": "/((?!api/ytmusic).*)",
       "has": [
         {
           "type": "header",
@@ -16,7 +16,7 @@
       "destination": "/api/handler"
     },
     {
-      "source": "/((?!api/youtube).*)",
+      "source": "/((?!api/ytmusic).*)",
       "destination": "/index.html"
     }
   ],
