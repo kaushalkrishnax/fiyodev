@@ -1,7 +1,7 @@
 {
   "rewrites": [
     {
-      "source": "/api/ytmusic",
+      "source": "/api/ytmusic/(.*)",
       "destination": "/api/ytmusic"
     },
     {
@@ -38,5 +38,10 @@
         }
       ]
     }
-  ]
+  ],
+  "functions": {
+    "api/ytmusic/get_track.js": {
+      "maxDuration": 30
+    }
+  }
 }
