@@ -1,4 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
+import { YTMUSIC_BASE_URI } from "../../constants.js";
+import axios from "axios";
 
 const SearchBox = ({
   searchQuery,
@@ -45,16 +47,15 @@ const SearchBox = ({
     }
 
     try {
-      const response = await fetch(
-        `https://fiyodev.vercel.app/api/ytmusic/get_search_suggestions?term=${encodeURIComponent(
+      const { data } = await axios.get(
+        `${YTMUSIC_BASE_URI}/suggestions?term=${encodeURIComponent(
           value
         )}`
       );
-      if (!response.ok) {
-        throw new Error("Failed to fetch suggestions");
-      }
-      const results = await response.json();
-      setSearchSuggestions(Array.isArray(results) ? results : []);
+
+      const suggestions = data?.data?.results || [];
+
+      setSearchSuggestions(suggestions);
     } catch (error) {
       console.error("Search error:", error);
       setSearchSuggestions([]);

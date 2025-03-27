@@ -31,7 +31,7 @@ const PlayerStack = () => {
   };
 
   return (
-    (currentTrack?.id || currentTrack?.videoId) &&
+    currentTrack?.videoId &&
     isTablet && (
       <div className="relative z-10 flex justify-center">
         <Sheet

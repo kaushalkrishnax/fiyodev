@@ -14,9 +14,8 @@ const Music = () => {
     handleAudioPause,
     handleNextAudioTrack,
     searchTracks,
-    advancedSearchTracks,
-    getTopTracks,
     currentTrack,
+    continuation,
     isAudioPlaying,
     audioProgress,
     seekTo,
@@ -30,19 +29,20 @@ const Music = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const searchBoxRef = useRef(null);
+  const trackListRef = useRef(null);
 
   /** Live Params Modifier */
   useEffect(() => {
     const queryParams = new URLSearchParams(location.search);
 
-    if (currentTrack?.id) {
-      queryParams.set("track", currentTrack.id);
+    if (currentTrack?.videoId) {
+      queryParams.set("track", currentTrack.videoId);
     } else {
       queryParams.delete("track");
     }
 
     navigate({ search: queryParams.toString() }, { replace: true });
-  }, [searchQuery, currentTrack?.id]);
+  }, [searchQuery, currentTrack?.videoId]);
 
   /** Query Params */
   useEffect(() => {
@@ -72,7 +72,7 @@ const Music = () => {
   useEffect(() => {
     if (!searchQuery) {
       setIsLoading(true);
-      getTopTracks().then((tracks) => {
+      searchTracks("Top+Hindi+Tracks").then((tracks) => {
         tracks.sort(() => 0.5 - Math.random());
         setTracks(tracks);
         setIsLoading(false);
@@ -91,14 +91,12 @@ const Music = () => {
     setSearchQuery("");
   };
 
-  const handleSearch = async (query, advanced = false) => {
+  const handleSearch = async (query) => {
     if (!query?.trim()) return;
 
     setIsLoading(true);
     try {
-      const data = await (advanced
-        ? advancedSearchTracks(query)
-        : searchTracks(query));
+      const data = await searchTracks(query);
       setTracks(data?.results);
     } catch (error) {
       console.error("Error performing search:", error);
@@ -151,6 +149,14 @@ const Music = () => {
     return () => document.removeEventListener("keydown", handleKeyDown);
   }, [isSearchBoxActive, isAudioPlaying, audioProgress]);
 
+  const handleTrackListScrollEnd = () => {
+    if (tracks?.length < 40 && continuation) {
+      searchTracks(searchQuery, continuation).then((tracks) => {
+        setTracks((prevTracks) => [...prevTracks, ...tracks]);
+      });
+    }
+  };
+
   return (
     <div className="flex justify-center mx-auto w-full h-screen font-SpotifyMedium overflow-hidden">
       <div className="flex-1 flex flex-col lg:flex-row max-w-7xl w-full md:px-6 gap-6">
@@ -197,22 +203,18 @@ const Music = () => {
                   : []
               }
             />
-            <div className="flex flex-col px-6 pt-2 gap-4 flex-grow">
-              <p className="text-gray-600 dark:text-gray-400 text-sm">
-                Can't find what you're looking for? &nbsp;
-                <button
-                  className="text-blue-400 underline underline-offset-2"
-                  onClick={() => handleSearch(searchQuery, true)}
-                >
-                  Advanced Search
-                </button>
-              </p>
-              <TrackList tracks={tracks} loading={isLoading} />
+            <div className="flex flex-col px-6 pt-2 gap-4 flex-grow pb-8">
+              <TrackList
+                tracks={tracks}
+                loading={isLoading}
+                ref={trackListRef}
+                onScrollEnd={handleTrackListScrollEnd}
+              />
             </div>
           </div>
         </div>
         <div className="flex-1 hidden lg:block bg-gradient-to-b lg:min-w-5/12">
-          {currentTrack?.id || currentTrack?.videoId ? (
+          {currentTrack?.videoId ? (
             <TrackDeck />
           ) : (
             <div className="w-full hidden lg:min-w-1/2 lg:block">
@@ -225,7 +227,7 @@ const Music = () => {
                 </p>
                 <button
                   className=" bg-black dark:bg-white hover:opacity-80 transition-opacity text-white dark:text-black px-4 py-2 rounded-full"
-                  onClick={() => getTrack(tracks[0]?.id)}
+                  onClick={() => getTrack(tracks[0]?.videoId)}
                 >
                   Play #1 track
                 </button>

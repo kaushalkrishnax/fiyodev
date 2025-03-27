@@ -12,6 +12,7 @@
   "dependencies": {
     "@apollo/client": "^3.13.4",
     "axios": "^1.8.1",
+    "cheerio": "^1.0.0",
     "cropperjs": "^2.0.0",
     "formik": "^2.4.6",
     "framer-motion": "^12.4.10",
@@ -28,6 +29,7 @@
     "socket.io-client": "^4.8.1",
     "uuid": "^11.1.0",
     "vite-plugin-vercel": "^9.0.5",
+    "ytdl-core": "^4.11.5",
     "yup": "^1.6.1"
   },
   "devDependencies": {

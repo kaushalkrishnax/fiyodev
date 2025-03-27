@@ -1,11 +1,12 @@
 import { useContext } from "react";
 import axios from "axios";
 import AppContext from "../context/items/AppContext.jsx";
-import { FIYOSAAVN_BASE_URI } from "../constants.js";
+import { YTMUSIC_BASE_URI } from "../constants.js";
 
 const useMusicUtils = ({
   audioRef,
   currentTrack,
+  setContinuation,
   setCurrentTrack,
   setIsAudioPlaying,
   setIsAudioLoading,
@@ -15,60 +16,59 @@ const useMusicUtils = ({
   const { contentQuality } = useContext(AppContext);
 
   /** Search Tracks */
-  const searchTracks = async (query) => {
+  const searchTracks = async (term, continuation = null) => {
+    setContinuation("");
     try {
       const { data } = await axios.get(
-        `${FIYOSAAVN_BASE_URI}/search/songs?query=${encodeURIComponent(
-          query
-        )}&limit=50`
+        `${YTMUSIC_BASE_URI}/search?term=${encodeURIComponent(term)}&&${
+          continuation ? `&continuation=${continuation}` : ""
+        }`
       );
-      return data.data;
+
+      setContinuation(data.data?.continuation);
+      return data.data?.results;
     } catch (error) {
       console.error(`Error searching: ${error}`);
       return [];
     }
   };
 
-  /** Advanced Search Tracks */
-  const advancedSearchTracks = async (query, continuation = null) => {
-    try {
-      const { data } = await axios.get(
-        `https://fiyodev.vercel.app/api/ytmusic/search_songs?term=${encodeURIComponent(
-          query
-        )}&${
-          continuation ? `&continuation=${continuation}` : ""
-        }&contentQuality=${contentQuality}`
-      );
-      return data.data;
-    } catch (error) {
-      console.error(`Error advanced searching: ${error}`);
-      return [];
-    }
-  };
-
   /** Get Track Data */
-  const getTrackData = async (trackId) => {
+  const getTrackData = async (videoId) => {
     try {
       const { data } = await axios.get(
-        `${FIYOSAAVN_BASE_URI}/songs/${trackId}`
+        `${YTMUSIC_BASE_URI}/track?videoId=${videoId}`
       );
-      const resultData = data.data[0];
+      const { title, artists, images, duration, urls } = data?.data;
 
-      if (!resultData) console.error("Error fetching track data");
+      if (!urls?.audio?.length) {
+        const {data} = await axios.get(
+          `https://fiyodev.vercel.app/api/get_yt_urls?videoId=${videoId}`
+        );
+        const { urls } = data?.data;
+        return urls;
+      }
 
-      const getQualityIndex = (quality, low, normal, high) =>
-        quality === "low" ? low : quality === "normal" ? normal : high;
+      const getQualityIndex = (quality) => {
+        switch (quality) {
+          case "low":
+            return 2;
+          case "normal":
+            return 1;
+          case "high":
+            return 0;
+          default:
+            return 0;
+        }
+      };
 
       const trackData = {
-        id: resultData.id,
-        name: resultData.name,
-        album: resultData.album.name,
-        artists: resultData.artists.primary
-          .map((artist) => artist.name)
-          .join(", "),
-        image: resultData.image[2]?.url,
-        link: resultData.downloadUrl[getQualityIndex(contentQuality, 0, 3, 4)]
-          ?.url,
+        videoId,
+        title,
+        artists,
+        image: images[3]?.url,
+        duration,
+        link: urls?.audio?.[getQualityIndex(contentQuality)],
       };
       return trackData;
     } catch (error) {
@@ -77,14 +77,14 @@ const useMusicUtils = ({
   };
 
   /** Get Track */
-  const getTrack = async (trackId) => {
+  const getTrack = async (videoId) => {
     setIsAudioLoading(true);
     try {
-      const fetchedTrackData = await getTrackData(trackId);
+      const fetchedTrackData = await getTrackData(videoId);
       if (!fetchedTrackData) return console.error("Error fetching track data");
 
       setCurrentTrack(fetchedTrackData);
-      setPreviouslyPlayedTracks((prevTracks) => [...prevTracks, trackId]);
+      setPreviouslyPlayedTracks((prevTracks) => [...prevTracks, videoId]);
     } catch (error) {
       console.error(`Error in getTrack: ${error}`);
     } finally {
@@ -92,57 +92,11 @@ const useMusicUtils = ({
     }
   };
 
-  /** Get Advanced Track */
-  const getAdvancedTrack = async (videoId, { name, artists, image }) => {
-    setIsAudioLoading(true);
-    try {
-      const fetchedTrackData = await fetch(
-        `https://fiyodev.vercel.app/api/ytmusic/get_song?videoId=${videoId}`
-      ).then((res) => res.json());
-
-      if (!fetchedTrackData) {
-        console.error("Error fetching track data");
-        return;
-      }
-
-      const link = `https://fiyodev.vercel.app/api/ytmusic/get_song_stream?link=${encodeURIComponent(
-        fetchedTrackData.link
-      )}`;
-
-      setCurrentTrack({
-        videoId,
-        name,
-        artists,
-        image,
-        link,
-      });
-
-      setPreviouslyPlayedTracks((prevTracks) => [...prevTracks, videoId]);
-    } catch (error) {
-      console.error(`Error in getAdvancedTrack: ${error}`);
-    } finally {
-      setIsAudioLoading(false);
-    }
-  };
-
-  /** Get top tracks */
-  const getTopTracks = async () => {
-    try {
-      const { data } = await axios.get(
-        `${FIYOSAAVN_BASE_URI}/playlists?id=1134543272&limit=40`
-      );
-      return data.data.songs;
-    } catch (error) {
-      console.error("Error fetching top tracks:", error);
-      return [];
-    }
-  };
-
   /** Get suggested track ID */
   const getSuggestedTrackId = async () => {
     try {
       const { data } = await axios.get(
-        `${FIYOSAAVN_BASE_URI}/songs/${currentTrack.id}/suggestions`,
+        `${YTMUSIC_BASE_URI}/songs/${currentTrack.id}/suggestions`,
         { params: { limit: 5 } }
       );
       const suggestedTrackIds = data.data.map((item) => item.id);
@@ -196,11 +150,8 @@ const useMusicUtils = ({
 
   return {
     searchTracks,
-    advancedSearchTracks,
     getTrackData,
     getTrack,
-    getAdvancedTrack,
-    getTopTracks,
     getSuggestedTrackId,
     handleAudioPlay,
     handleAudioPause,

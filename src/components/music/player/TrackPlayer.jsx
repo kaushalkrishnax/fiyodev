@@ -20,7 +20,7 @@ const TrackPlayer = ({ onOpenTrackDeck }) => {
     ? handleAudioPause
     : () => {
         if (currentTrack?.isExternal) {
-          getTrack(currentTrack?.id);
+          getTrack(currentTrack?.videoId);
           setCurrentTrack({ ...currentTrack, isExternal: false });
         } else {
           handleAudioPlay();
@@ -46,7 +46,7 @@ const TrackPlayer = ({ onOpenTrackDeck }) => {
           <div className="flex-1 ml-3 overflow-hidden">
             <button className="text-start w-full" onClick={onOpenTrackDeck}>
               <p className="text-sm font-medium dark:text-gray-100 truncate">
-                {currentTrack.name}
+                {currentTrack.title}
               </p>
               <p className="text-gray-400 text-xs font-medium dark:text-gray-500 truncate">
                 {currentTrack.artists}

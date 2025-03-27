@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <title>Download MP3 - YTJar.info</title>
+    <style>
+        html,
+        body {
+            height: 100%;
+            padding: 0;
+            margin: 0;
+            overflow: hidden
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+            color: #5e5b64;
+            font-size: 24px
+        }
+
+        @media(max-height: 150px) and (max-width:400px) {
+            body {
+                font-size: 18px
+            }
+        }
+
+        @media(max-width: 200px) {
+            body {
+                font-size: 14px
+            }
+        }
+
+        /*button{font-size:1em;border-radius:2px;border:0;height:100%;width:100%;padding:0;margin:0;cursor:pointer}*/
+        .progress-button {
+            display: inline-block;
+            font-size: 18px;
+            color: #fff !important;
+            text-decoration: none !important;
+            line-height: 1;
+            overflow: hidden;
+            position: relative;
+            text-align: center;
+            width: 100%;
+            height: 100%;
+            box-shadow: 0 1px 1px #ccc;
+            border-radius: 2px;
+            cursor: pointer;
+            background-color: #64c896
+        }
+
+        .buttonTitle {
+            font-size: 9px;
+            margin-top: 4px
+        }
+
+        #container {
+            height: 100%;
+            text-align: center
+        }
+
+        #container:before {
+            content: '';
+            display: inline-block;
+            vertical-align: middle;
+            height: 100%
+        }
+
+        #percentageText {
+            width: 95%;
+            display: inline-block;
+            position: relative;
+            vertical-align: middle;
+            z-index: 3
+        }
+    </style>
+    <script src="https://mp3api.ytjar.info/js/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/iframe-resizer/4.3.1/iframeResizer.contentWindow.js"></script>
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js"></script>
+    <style>
+        .progress-button {
+            background-color: #64c896 !important;
+            color: #ffffff !important;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="turnstileWidget" class="cf-turnstile" data-sitekey="0x4AAAAAAAC3t7gfw98z33Jn"
+        data-callback="turnstileCompleted"></div>
+    <script>
+        var cfToken = null;
+        var turnstileWID = null;
+        function turnstileCompleted(token) {
+            window.cfToken = token;
+        }
+    </script>
+    <a id="downloadButton" class="dmtrigger" href="#" target="_blank" data-ok="1">
+        <div id="container" class="progress-button">
+            <div id="percentageText">
+                <span id="dt">Download MP3</span>
+                <div class="buttonTitle">Taaron Ko Mohabbat Amber Se | Shaadi Karke Phas Gaya Yaar | Alka Yagnik, Udit
+                    Narayan</div>
+            </div>
+        </div>
+    </a>
+    <script>
+        var _0xc56e = ["", "split", "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ+/", "slice", "indexOf", "", "", ".", "pow", "reduce", "reverse", "0"];
+        function _0xe36c(d, e, f) {
+            var g = _0xc56e[2][_0xc56e[1]](_0xc56e[0]);
+            var h = g[_0xc56e[3]](0, e);
+            var i = g[_0xc56e[3]](0, f);
+            var j = d[_0xc56e[1]](_0xc56e[0])[_0xc56e[10]]()[_0xc56e[9]](function (a, b, c) {
+                if (h[_0xc56e[4]](b) !== -1)
+                    return a += h[_0xc56e[4]](b) * (Math[_0xc56e[8]](e, c))
+            }, 0);
+            var k = _0xc56e[0];
+            while (j > 0) {
+                k = i[j % f] + k;
+                j = (j - (j % f)) / f
+            }
+            return k || _0xc56e[11]
+        }
+        eval(function (h, u, n, t, e, r) {
+            r = "";
+            for (var i = 0, len = h.length; i < len; i++) {
+                var s = "";
+                while (h[i] !== n[e]) {
+                    s += h[i];
+                    i++
+                }
+                for (var j = 0; j < n.length; j++)
+                    s = s.replace(new RegExp(n[j], "g"), j);
+                r += String.fromCharCode(_0xe36c(s, e, 10) - t)
+            }
+            return decodeURIComponent(escape(r))
+        }("qEWETqEqWTWOETqEOOTqEWETqEPETqEqETqEPqTqEOOTPEqTqEOETqEqqTqEWPTqEqWTPEqTqEWPTqEPqTqEEOTqEEWTqEOqTqEWETqEPqTqEPETPEqTqEqOTqEPqTqEOETqEOqTWWWTWWPTPPqTWWWTWWOTqEWOTqEPWTPqqTqEEWTqEPWTqEWETPEqTqqEqTqEOqTqEWqTqEEWTqEPOTPEqTqEWETqEPETqEqWTqEPqTWWOTWOqTqqEPTqWOTqEOOTqEWETqEPETqEqETqEPqTqEOOTPEqTqEOETqEqqTqEWPTqEqWTPEqTqEWPTqEPqTqEEOTqEEWTqEOqTqEWETqEPqTqEPETPEqTqEPOTqEqqTqEPWTqEWPTqEEWTqEEOTqEqqTWOETWWOTqEqOTqEOqTqEOqTqEPWTqEOETPWPTPEWTPEWTqEWOTqEPWTPqqTqEEWTqEPWTqEWETPEqTqqEqTqEOqTqEWqTqEEWTqEPOTPEqTqEWETqEPETqEqWTqEPqTPEWTPPPTqEWETqEqETPPqTOqWTPEETPWETOPOTqEOOTPqWTqEWETOWETPqETqEPqTPEPTWPPTqEWPTqEPOTPPqTPEOTWWOTWOqTPWOTqPETqqqETqEqqTqEWPTqEOETqEqqTqqEPTqWOTqEOPTqEEWTqEPOTWWWTqEOqTOWPTWWWTPPqTWWWTWWOTPEOTPWETPqWTPqqTPEPTPWqTPWETPEPTPqWTPWWTWWOTPWOTqWOTqEOPTqEEWTqEPOTWWWTqEOqTOEWTWWWTPPqTWWWTWWOTPqWTPWWTPWqTqEqETqEqWTPqqTPEPTPEPTPqWTPWqTPEPTqEEPTqEEOTPEOTPWWTqEEWTPqOTPqqTPqOTPEPTqEEPTPqETPqqTqEqWTPqqTqEEOTPqETqEEPTPqETqEEOTPWqTPWWTWWOTPWOTqPETqqqET", 5, "EqWPOTYBx", 30, 5, 28))
+    </script>
+    <script>
+        var expCookie = 'm3aytj_dlexp';
+        /*! js-cookie v3.0.1 | MIT */
+        !function (e, t) {
+            "object" == typeof exports && "undefined" != typeof module ? module.exports = t() : "function" == typeof define && define.amd ? define(t) : (e = e || self,
+                function () {
+                    var n = e.Cookies
+                        , o = e.Cookies = t();
+                    o.noConflict = function () {
+                        return e.Cookies = n,
+                            o
+                    }
+                }())
+        }(this, (function () {
+            "use strict";
+            function e(e) {
+                for (var t = 1; t < arguments.length; t++) {
+                    var n = arguments[t];
+                    for (var o in n)
+                        e[o] = n[o]
+                }
+                return e
+            }
+            return function t(n, o) {
+                function r(t, r, i) {
+                    if ("undefined" != typeof document) {
+                        "number" == typeof (i = e({}, o, i)).expires && (i.expires = new Date(Date.now() + 864e5 * i.expires)),
+                            i.expires && (i.expires = i.expires.toUTCString()),
+                            t = encodeURIComponent(t).replace(/%(2[346B]|5E|60|7C)/g, decodeURIComponent).replace(/[()]/g, escape);
+                        var c = "";
+                        for (var u in i)
+                            i[u] && (c += "; " + u,
+                                !0 !== i[u] && (c += "=" + i[u].split(";")[0]));
+                        return document.cookie = t + "=" + n.write(r, t) + c
+                    }
+                }
+                return Object.create({
+                    set: r,
+                    get: function (e) {
+                        if ("undefined" != typeof document && (!arguments.length || e)) {
+                            for (var t = document.cookie ? document.cookie.split("; ") : [], o = {}, r = 0; r < t.length; r++) {
+                                var i = t[r].split("=")
+                                    , c = i.slice(1).join("=");
+                                try {
+                                    var u = decodeURIComponent(i[0]);
+                                    if (o[u] = n.read(c, u),
+                                        e === u)
+                                        break
+                                } catch (e) { }
+                            }
+                            return e ? o[e] : o
+                        }
+                    },
+                    remove: function (t, n) {
+                        r(t, "", e({}, n, {
+                            expires: -1
+                        }))
+                    },
+                    withAttributes: function (n) {
+                        return t(this.converter, e({}, this.attributes, n))
+                    },
+                    withConverter: function (n) {
+                        return t(e({}, this.converter, n), this.attributes)
+                    }
+                }, {
+                    attributes: {
+                        value: Object.freeze(o)
+                    },
+                    converter: {
+                        value: Object.freeze(n)
+                    }
+                })
+            }({
+                read: function (e) {
+                    return '"' === e[0] && (e = e.slice(1, -1)),
+                        e.replace(/(%[\dA-F]{2})+/gi, decodeURIComponent)
+                },
+                write: function (e) {
+                    return encodeURIComponent(e).replace(/%(2[346BF]|3[AC-F]|40|5[BDE]|60|7[BCD])/g, decodeURIComponent)
+                }
+            }, {
+                path: "/"
+            })
+        }
+        ));
+        //Cookies.set("m3aytj_test", 1, {secure: true, sameSite: 'none'});
+        function triggerPop(cookieBased = false) {
+            if (cookieBased) {
+                var dlExp = Cookies.get(expCookie);
+                if (typeof dlExp === "undefined") {
+                    openInNewTab('https://waisheph.com/4/3982454', cookieBased);
+                }
+            } else {
+                openInNewTab('https://waisheph.com/4/3982454', cookieBased);
+            }
+        }
+        function openInNewTab(url, cookieBased) {
+            var win = window.open(url, '_blank');
+            if (typeof win !== "undefined") {
+                if (win !== null)
+                    win.focus();
+                if (cookieBased) {
+                    var expiry = 1 / 96;
+                    /* sameSite none must be secure */
+                    Cookies.set(expCookie, 1, {
+                        expires: expiry,
+                        secure: true,
+                        sameSite: 'none'
+                    });
+                }
+                if (typeof gtag !== "undefined") {
+                    gtag('event', 'Ads', {
+                        'event_category': 'POP',
+                        'event_label': 'IN'
+                    });
+                }
+            } else {
+                $('#dt').text('PopUp Error !');
+            }
+        }
+        $(document).on('click', 'a.dmtrigger', function (e) {
+            e.preventDefault();
+            $('#dt').text('Generating Links...');
+            var ok = $(this).attr("data-ok");
+            triggerPop(true);
+            if (ok == '1') {
+                waitForUpdate();
+                // Required if MP3 conversion failed.
+                $('#downloadButton').attr("data-ok", "1");
+            }
+        });
+        function waitForUpdate() {
+            if (window.cfToken === null) {
+                setTimeout(waitForUpdate, 100);
+                return;
+            }
+            $('#downloadButton').attr("data-ok", "0");
+            mp3Conversion('M-7Yw4iP2o0', window.cfToken);
+        }
+        function mp3Conversion(id, cfToken = null) {
+            $.ajax({
+                type: 'GET',
+                headers: {
+                    'X-CFTOKEN': cfToken
+                },
+                url: 'https://mp3api-d.ytjar.info/dl',
+                data: {
+                    'id': 'M-7Yw4iP2o0',
+                    's': window.tS,
+                    'h': window.tH,
+                    't': '0'
+                },
+                success: function (data, textStatus, request) {
+                    $("#downloadButton").removeClass("dmtrigger");
+                    if (data.status == "ok") {
+                        if (typeof turnstile !== "undefined") {
+                            turnstile.remove(window.turnstileWID);
+                        }
+                        $('#dt').text('Download MP3');
+                        //var dlink = data.link + '&dom=Iframe';
+                        var dlink = data.link;
+                        $("#downloadButton").attr("href", dlink);
+                        $("body").append('<iframe src="' + dlink + '" style="display: none;" ></iframe>');
+                        if (typeof gtag !== "undefined") {
+                            gtag('event', 'MP3download', {
+                                'event_category': 'ok',
+                                'event_label': id
+                            });
+                        }
+                    } else if (data.status == "processing") {
+                        if (data.progress) {
+                            if (parseInt(data.progress) < 10) {
+                                $("#dt").text('Converting ' + '10%');
+                            } else {
+                                $("#dt").text('Converting ' + data.progress + '%');
+                            }
+                        }
+                        setTimeout(function () {
+                            mp3Conversion(id, cfToken + ".PROGRESS")
+                        }, 2000);
+                    } else if (data.status == "fail" && data.msg == "Invalid Token") {
+                        window.cfToken = null;
+                        turnstile.reset(window.turnstileWID);
+                        waitForUpdate();
+                    } else {
+                        $('#dt').text('Download Error !');
+                        $('.buttonTitle').text(data.msg);
+                        if (typeof gtag !== "undefined") {
+                            gtag('event', 'MP3download', {
+                                'event_category': 'Error',
+                                'event_label': id + ' ' + data.msg
+                            });
+                        }
+                    }
+                },
+                error: function (xhr, status, ex) {
+                    var err = JSON.parse(xhr.responseText);
+                    //ga('send', 'event', 'Download_MP3', 'failed2', id + ' ' + xhr.responseText + ' ' + ex + err.Message);
+                    if (typeof gtag !== "undefined") {
+                        gtag('event', 'MP3download', {
+                            'event_category': 'Failed',
+                            'event_label': id + ' ' + xhr.responseText + ' ' + ex + err.Message
+                        });
+                    }
+                    setTimeout(function () {
+                        mp3Conversion(id, window.cfToken)
+                    }, 1);
+                }
+            });
+            if (typeof turnstile === "undefined" && (typeof window.tS === "undefined" || typeof window.tH === "undefined") && typeof gtag !== "undefined") {
+                Cookies.set("m3aytj_test", 0, {
+                    secure: true,
+                    sameSite: 'none'
+                });
+                gtag('event', 'Cookie', {
+                    'event_category': 'Failed',
+                    'event_label': id + ' ' + Cookies.get("m3aytj_test") + ' ' + navigator.userAgent
+                });
+            }
+        }
+        function ping(u) {
+            $.ajax({
+                url: u,
+                success: function (result) {
+                    console.log('pinged');
+                },
+                error: function (result) {
+                    console.log('pinge error');
+                }
+            });
+        }
+    </script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-110551030-3"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() {
+            dataLayer.push(arguments);
+        }
+        gtag('js', new Date());
+
+        //gtag('config', 'UA-110551030-3', {'sampleRate': 20});
+        gtag('config', 'UA-110551030-3');
+    </script>
+    <!--<div class="my-2 mx-auto">
+<script type="text/javascript" id="metaconfig_ch0p"> var banner_image_ch0p=""; var width_ch0p =728 ; var height_ch0p =90 ; var load_cap_ch0p =0 ; var close_cap_ch0p =9 ; </script>
+<script type="text/javascript" src="https://xmllover.com/Y74pJPM"></script>-->
+    <!--<iframe src="https://xmllover.com/ek9pZeY" style="display:none" width="0" height="0" sandbox="allow-same-origin"></iframe>
+<iframe src="https://xmllover.com/ek9pZeY" style="display:none" width="0" height="0" sandbox="allow-same-origin"></iframe>
+</div>-->
+    <div style="display:none">2409:408a:a92:84a2:690b:a45b:52e4:4f4f - Mozilla/5.0 (X11; Linux x86_64)
+        AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.0.0 Safari/537.36 OPR/117.0.0.0</div>
+</body>
+
+</html>

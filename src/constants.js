@@ -1,3 +1,2 @@
 export const FIYOGQL_BASE_URI = "https://fiyogql.onrender.com/graphql"
-// export const FIYOSAAVN_BASE_URI = "https://fiyosaavn.vercel.app/api";
-export const FIYOSAAVN_BASE_URI = "https://saavn.dev/api";
+export const YTMUSIC_BASE_URI = "https://ytmusic.kaushalkrishna011.workers.dev"

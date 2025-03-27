@@ -5,6 +5,7 @@ const MusicContext = createContext(null);
 
 export const MusicProvider = ({ children }) => {
   const [currentTrack, setCurrentTrack] = useState({});
+  const [continuation, setContinuation] = useState(null);
   const [loopAudio, setLoopAudio] = useState(false);
   const [isAudioPlaying, setIsAudioPlaying] = useState(false);
   const [isAudioLoading, setIsAudioLoading] = useState(false);
@@ -22,6 +23,8 @@ export const MusicProvider = ({ children }) => {
   const MusicUtils = useMusicUtils({
     audioRef,
     currentTrack,
+    continuation,
+    setContinuation,
     setCurrentTrack,
     setIsAudioPlaying,
     setIsAudioLoading,
@@ -98,6 +101,7 @@ export const MusicProvider = ({ children }) => {
         const audio = audioRef.current;
 
         if (audio.src !== currentTrack.link) {
+          console.log("Loading new track:", currentTrack.link)
           audio.src = currentTrack.link;
           audio.load();
         }
@@ -130,6 +134,8 @@ export const MusicProvider = ({ children }) => {
       value={{
         currentTrack,
         setCurrentTrack,
+        continuation,
+        setContinuation,
         loopAudio,
         setLoopAudio,
         isAudioPlaying,

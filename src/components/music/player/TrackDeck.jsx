@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useCallback } from "react";
+import React from "react";
 import { useContext } from "react";
 import MusicContext from "../../../context/items/MusicContext";
 import AudioProgressBar from "./AudioProgressBar";
@@ -23,7 +23,7 @@ const TrackDeck = () => {
     ? handleAudioPause
     : () => {
         if (currentTrack?.isExternal) {
-          getTrack(currentTrack?.id);
+          getTrack(currentTrack?.videoId);
           setCurrentTrack({ ...currentTrack, isExternal: false });
         } else {
           handleAudioPlay();
@@ -39,7 +39,7 @@ const TrackDeck = () => {
           className="w-full h-full aspect-square border-none rounded-xl bg-secondary-bg dark:bg-secondary-bg-dark"
         />
         <div className="flex flex-col items-start justify-start w-full px-2 pt-4 gap-2">
-          <span className="text-2xl">{currentTrack?.name}</span>
+          <span className="text-2xl">{currentTrack?.title}</span>
           <span className="text-sm text-gray-500">{currentTrack?.artists}</span>
         </div>
       </div>
