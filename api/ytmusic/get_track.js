@@ -17,10 +17,6 @@ export default async function handler(req, res) {
       `https://music.youtube.com/youtubei/v1/player?prettyPrint=false`,
       {
         method: "POST",
-        headers: {
-          Origin: "https://music.youtube.com",
-          Referer: "https://music.youtube.com/",
-        },
         body: JSON.stringify({
           videoId,
           context: {
