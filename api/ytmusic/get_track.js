@@ -19,8 +19,13 @@ export default async function handler(req, res) {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36",
-          "Accept": "*/*",
+          "User-Agent":
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
+          "Accept-Language": "en-US,en;q=0.9",
+          "Referer": "https://music.youtube.com/",
+          "Origin": "https://music.youtube.com",
+          "X-Youtube-Client-Name": "67", // Required for YouTube Music API
+          "X-Youtube-Client-Version": "1.20250317.01.00", // Match latest version
         },
         body: JSON.stringify({
           videoId,
