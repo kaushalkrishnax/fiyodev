@@ -10,14 +10,11 @@ export default async function handler(req, res) {
   const { term, continuation } = req.query;
   if (!term) return res.status(400).json({ error: "Missing search term" });
 
-  let songs = [];
-  let songsListContinuation = null;
-
   try {
     const ytMusicResponse = await fetch(
       `https://music.youtube.com/youtubei/v1/search?${
         continuation ? `continuation=${continuation}&type=next` : ""
-      }&prettyPrint=true`,
+      }&prettyPrint=false`,
       {
         method: "POST",
         headers: {
@@ -41,54 +38,61 @@ export default async function handler(req, res) {
 
     const ytMusicData = await ytMusicResponse.json();
 
-    const songContents =
+    const tracks = [];
+
+    const trackContents =
       ytMusicData?.continuationContents?.musicShelfContinuation?.contents ??
       ytMusicData?.contents?.tabbedSearchResultsRenderer?.tabs?.[0]?.tabRenderer
         ?.content?.sectionListRenderer?.contents?.[0]?.musicShelfRenderer
         ?.contents;
 
-    songsListContinuation =
+    const tracksContinuation =
       ytMusicData?.continuationContents?.musicShelfContinuation
         ?.continuations?.[0]?.nextContinuationData?.continuation ??
       ytMusicData?.contents?.tabbedSearchResultsRenderer?.tabs?.[0]?.tabRenderer
         ?.content?.sectionListRenderer?.contents?.[0]?.musicShelfRenderer
         ?.continuations?.[0]?.nextContinuationData?.continuation;
 
-    for (const { musicResponsiveListItemRenderer: song } of songContents ||
+    for (const { musicResponsiveListItemRenderer: track } of trackContents ||
       []) {
       try {
-        if (!song?.playlistItemData?.videoId) continue;
+        if (!track?.playlistItemData?.videoId) continue;
 
-        const videoId = song?.playlistItemData?.videoId;
-        const image =
-          song?.thumbnail?.musicThumbnailRenderer?.thumbnail?.thumbnails;
-        const name =
-          song?.flexColumns[0]?.musicResponsiveListItemFlexColumnRenderer?.text
+        const videoId = track?.playlistItemData?.videoId;
+        const images =
+          track?.thumbnail?.musicThumbnailRenderer?.thumbnail?.thumbnails;
+        const title =
+          track?.flexColumns[0]?.musicResponsiveListItemFlexColumnRenderer?.text
             ?.runs?.[0]?.text;
         const artists =
-          song?.flexColumns[1]?.musicResponsiveListItemFlexColumnRenderer?.text?.runs
+          track?.flexColumns[1]?.musicResponsiveListItemFlexColumnRenderer?.text?.runs
             ?.map((run) => run?.text)
             .join("");
         const playsCount =
-          song?.flexColumns[2]?.musicResponsiveListItemFlexColumnRenderer?.text
+          track?.flexColumns[2]?.musicResponsiveListItemFlexColumnRenderer?.text
             ?.runs?.[0]?.text;
 
-        songs.push({
+        tracks.push({
           videoId,
-          name,
+          title,
           artists,
           playsCount,
-          image,
+          images,
         });
       } catch (error) {
-        console.error(`Error processing ${name}:`, error.message);
+        console.error(`Error processing ${title}:`, error.message);
       }
     }
+
+    res.status(200).json({
+      status: { success: true, message: "Tracks found." },
+      data: { results: tracks, continuation: tracksContinuation },
+    });
   } catch (error) {
-    console.error("YT Music Search Songs API error:", error);
-  } finally {
-    res
-      .status(200)
-      .json({ data: { results: songs, continuation: songsListContinuation } });
+    console.error("YT Music API error:", error);
+    res.status(500).json({
+      status: { success: false, message: "Error fetching tracks." },
+      error: error.message,
+    });
   }
 }

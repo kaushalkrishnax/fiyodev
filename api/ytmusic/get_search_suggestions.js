@@ -10,8 +10,6 @@ export default async function handler(req, res) {
   const { term } = req.query;
   if (!term) return res.status(400).json({ error: "Missing search term" });
 
-  let suggestions = [];
-
   try {
     const ytMusicResponse = await fetch(
       "https://music.youtube.com/youtubei/v1/music/get_search_suggestions",
@@ -39,6 +37,8 @@ export default async function handler(req, res) {
     const suggestionContents =
       ytMusicData?.contents?.[0]?.searchSuggestionsSectionRenderer?.contents;
 
+    const suggestions = [];
+
     suggestionContents?.forEach((content) => {
       const suggestionText =
         content?.searchSuggestionRenderer?.suggestion?.runs?.[0]?.text;
@@ -50,9 +50,16 @@ export default async function handler(req, res) {
         suggestions.push({ suggestionText, suggestionQuery });
       }
     });
+
+    res.status(200).json({
+      status: { success: true, message: "Suggestions found." },
+      data: { results: suggestions.slice(0, 5) },
+    });
   } catch (error) {
     console.error("YT Music Search Suggestions API error:", error);
-  } finally {
-    res.status(200).json(suggestions.slice(0, 5));
+    res.status(500).json({
+      status: { success: false, message: "Error fetching suggestions." },
+      error: error.message,
+    });
   }
 }
