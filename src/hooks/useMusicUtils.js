@@ -39,8 +39,7 @@ const useMusicUtils = ({
         ),
       ]);
 
-      const { title, artists, images, duration, playlistId } =
-        trackRes?.data?.data?.track;
+      const { title, artists, images, duration } = trackRes?.data?.data?.track;
       const { urls } = urlRes?.data?.data;
 
       return {
@@ -50,7 +49,7 @@ const useMusicUtils = ({
         image: images?.[3]?.url,
         duration,
         urls,
-        playlistId,
+        playlistId: trackRes?.data?.data?.playlistId,
       };
     } catch (error) {
       console.error(`Error fetching track data: ${error}`);
