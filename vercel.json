@@ -1,11 +1,7 @@
 {
   "rewrites": [
     {
-      "source": "/api/ytmusic/(.*)",
-      "destination": "/api/ytmusic"
-    },
-    {
-      "source": "/((?!api/ytmusic).*)",
+      "source": "/(.*)",
       "has": [
         {
           "type": "header",
