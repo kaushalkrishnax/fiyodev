@@ -51,7 +51,7 @@ const Music = () => {
       const q = queryParams.get("q");
       const trackParam = queryParams.get("track");
 
-      if (trackParam) {
+      if (trackParam && trackParam !== currentTrack?.videoId) {
         try {
           await getTrack(trackParam);
         } catch (error) {

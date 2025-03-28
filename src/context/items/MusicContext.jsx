@@ -94,8 +94,7 @@ export const MusicProvider = ({ children }) => {
   }, [isAudioPlaying, loopAudio, isPlayerReady, isHandlingNextAudioTrack]);
 
   useEffect(() => {
-    if (!(currentTrack?.id || currentTrack?.videoId) || !currentTrack?.link)
-      return;
+    if (!currentTrack?.videoId || !currentTrack?.urls) return;
 
     const playAudio = async () => {
       try {
@@ -119,7 +118,6 @@ export const MusicProvider = ({ children }) => {
           audio.src !==
           currentTrack.urls?.audio?.[getQualityIndex(contentQuality)]
         ) {
-          console.log("Loading new track:", currentTrack.link);
           audio.src =
             currentTrack.urls?.audio?.[getQualityIndex(contentQuality)];
           audio.load();
@@ -136,7 +134,7 @@ export const MusicProvider = ({ children }) => {
     };
 
     playAudio();
-  }, [currentTrack?.id, currentTrack?.link, contentQuality]);
+  }, [currentTrack?.videoId, currentTrack?.urls]);
 
   const handleNextAudioTrack = async () => {
     await MusicUtils.handleNextAudioTrack();

@@ -1,22 +1,56 @@
 import axios from "axios";
+import { openDB } from "idb";
 import { YTMUSIC_BASE_URI } from "../constants.js";
 
 const useMusicUtils = ({
   audioRef,
   currentTrack,
-  setContinuation,
   setCurrentTrack,
+  setContinuation,
   setIsAudioPlaying,
   setIsAudioLoading,
   previouslyPlayedTracks,
   setPreviouslyPlayedTracks,
 }) => {
+  /** Open IndexedDB */
+  const openTrackDB = async () => {
+    return openDB("TrackCacheDB", 1, {
+      upgrade(db) {
+        if (!db.objectStoreNames.contains("tracks")) {
+          db.createObjectStore("tracks", { keyPath: "videoId" });
+        }
+      },
+    });
+  };
+
+  /** Cache Track Data */
+  const cacheTrackData = async (track) => {
+    const db = await openTrackDB();
+    const tx = db.transaction("tracks", "readwrite");
+    const store = tx.objectStore("tracks");
+    await store.put(track);
+    await tx.done;
+  };
+
+  /** Get Cached Track Data */
+  const getCachedTrackData = async (videoId) => {
+    const db = await openTrackDB();
+    const tx = db.transaction("tracks", "readonly");
+    const store = tx.objectStore("tracks");
+
+    const track = await store.get(videoId);
+    if (!track || track.createdAt < new Date().getTime() - 1000 * 60 * 60) {
+      return null;
+    }
+    return track;
+  };
+
   /** Search Tracks */
   const searchTracks = async (term, continuation = null) => {
     setContinuation("");
     try {
       const { data } = await axios.get(
-        `${YTMUSIC_BASE_URI}/search?term=${encodeURIComponent(term)}&&${
+        `${YTMUSIC_BASE_URI}/search?term=${encodeURIComponent(term)}&${
           continuation ? `&continuation=${continuation}` : ""
         }`
       );
@@ -32,17 +66,20 @@ const useMusicUtils = ({
   /** Get Track Data */
   const getTrackData = async (videoId) => {
     try {
+      const cachedTrack = await getCachedTrackData(videoId);
+      if (cachedTrack) {
+        return cachedTrack;
+      }
+
       const [trackRes, urlRes] = await Promise.all([
         axios.get(`${YTMUSIC_BASE_URI}/track?videoId=${videoId}`),
-        axios.get(
-          `https://fiyodev.vercel.app/api/get_yt_urls?videoId=${videoId}`
-        ),
+        axios.get(`https://fiyodev.vercel.app/api/get_yt_urls?videoId=${videoId}`),
       ]);
 
       const { title, artists, images, duration } = trackRes?.data?.data?.track;
       const { urls } = urlRes?.data?.data;
 
-      return {
+      const trackData = {
         videoId,
         title,
         artists,
@@ -50,7 +87,12 @@ const useMusicUtils = ({
         duration,
         urls,
         playlistId: trackRes?.data?.data?.playlistId,
+        createdAt: new Date(),
       };
+
+      await cacheTrackData(trackData);
+
+      return trackData;
     } catch (error) {
       console.error(`Error fetching track data: ${error}`);
       return null;
@@ -96,14 +138,17 @@ const useMusicUtils = ({
   /** Handle Next Audio Track */
   const handleNextAudioTrack = async () => {
     try {
-      const nextTrackId = await axios.get(
+      const nextTrackRes = await axios.get(
         `${YTMUSIC_BASE_URI}/next?videoId=${currentTrack.videoId}&playlistId=${
           currentTrack.playlistId
         }&previouslyPlayedTracks=${previouslyPlayedTracks.join(",")}`
       );
+      const nextTrackId = nextTrackRes?.data?.data?.videoId;
+      if (!nextTrackId) return console.error("No next track found!");
+
       await getTrack(nextTrackId);
     } catch (error) {
-      console.error(`Error handleNextTrack: ${error}`);
+      console.error(`Error in handleNextTrack: ${error}`);
     }
   };
 
