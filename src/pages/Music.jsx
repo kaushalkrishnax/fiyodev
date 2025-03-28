@@ -96,8 +96,8 @@ const Music = () => {
 
     setIsLoading(true);
     try {
-      const data = await searchTracks(query);
-      setTracks(data?.results);
+      const results = await searchTracks(query);
+      setTracks(results);
     } catch (error) {
       console.error("Error performing search:", error);
     } finally {
