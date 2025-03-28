@@ -20,29 +20,6 @@
       "destination": "/index.html"
     }
   ],
-  "headers": [
-    {
-      "source": "/api/(.*)",
-      "headers": [
-        {
-          "key": "Access-Control-Allow-Origin",
-          "value": [
-            "https://fiyodev.vercel.app",
-            "http://localhost:3000",
-            "*"
-          ]
-        },
-        {
-          "key": "Access-Control-Allow-Methods",
-          "value": "GET, POST, OPTIONS"
-        },
-        {
-          "key": "Access-Control-Allow-Headers",
-          "value": "Content-Type"
-        }
-      ]
-    }
-  ],
   "functions": {
     "api/get_yt_urls.js": {
       "maxDuration": 30
