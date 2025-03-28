@@ -39,7 +39,7 @@ const useMusicUtils = ({
     const store = tx.objectStore("tracks");
 
     const track = await store.get(videoId);
-    if (track.createdAt < new Date().getTime() - 6 * 60 * 60 * 1000) {
+    if (track?.createdAt < new Date().getTime() - 6 * 60 * 60 * 1000) {
       await store.delete(videoId);
       return null;
     }
@@ -144,7 +144,7 @@ const useMusicUtils = ({
       const nextTrackRes = await axios.get(
         `${YTMUSIC_BASE_URI}/next?videoId=${currentTrack.videoId}&playlistId=${
           currentTrack.playlistId
-        }&previouslyPlayedTracks=${previouslyPlayedTracks.join(",")}`
+        }&previouslyPlayedTracks=${previouslyPlayedTracks.join(",") || ""}`
       );
       const nextTrackId = nextTrackRes?.data?.data?.videoId;
       if (!nextTrackId) return console.error("No next track found!");

@@ -22,7 +22,8 @@
   ],
   "functions": {
     "api/get_yt_urls.js": {
-      "maxDuration": 30
+      "maxDuration": 30,
+      "runtime": "edge"
     }
   }
 }
