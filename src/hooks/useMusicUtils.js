@@ -39,7 +39,8 @@ const useMusicUtils = ({
     const store = tx.objectStore("tracks");
 
     const track = await store.get(videoId);
-    if (!track || track.createdAt < new Date().getTime() - 1000 * 60 * 60) {
+    if (track.createdAt < new Date().getTime() - 6 * 60 * 60 * 1000) {
+      await store.delete(videoId);
       return null;
     }
     return track;
@@ -73,7 +74,9 @@ const useMusicUtils = ({
 
       const [trackRes, urlRes] = await Promise.all([
         axios.get(`${YTMUSIC_BASE_URI}/track?videoId=${videoId}`),
-        axios.get(`https://fiyodev.vercel.app/api/get_yt_urls?videoId=${videoId}`),
+        axios.get(
+          `https://fiyodev.vercel.app/api/get_yt_urls?videoId=${videoId}`
+        ),
       ]);
 
       const { title, artists, images, duration } = trackRes?.data?.data?.track;
