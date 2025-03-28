@@ -32,28 +32,29 @@ const useMusicUtils = ({
   /** Get Track Data */
   const getTrackData = async (videoId) => {
     try {
-      const { data } = await axios.get(
-        `${YTMUSIC_BASE_URI}/track?videoId=${videoId}`
-      );
-      const { title, artists, images, duration } = data?.data?.track;
+      const [trackRes, urlRes] = await Promise.all([
+        axios.get(`${YTMUSIC_BASE_URI}/track?videoId=${videoId}`),
+        axios.get(
+          `https://fiyodev.vercel.app/api/get_yt_urls?videoId=${videoId}`
+        ),
+      ]);
 
-      const { data: urlData } = await axios.get(
-        `https://fiyodev.vercel.app/api/get_yt_urls?videoId=${videoId}`
-      );
-      const { urls } = urlData?.data;
+      const { title, artists, images, duration, playlistId } =
+        trackRes?.data?.data?.track;
+      const { urls } = urlRes?.data?.data;
 
-      const trackData = {
+      return {
         videoId,
         title,
         artists,
-        image: images[3]?.url,
+        image: images?.[3]?.url,
         duration,
         urls,
-        playlistId: data?.data?.playlistId,
+        playlistId,
       };
-      return trackData;
     } catch (error) {
       console.error(`Error fetching track data: ${error}`);
+      return null;
     }
   };
 
