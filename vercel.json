@@ -24,8 +24,5 @@
     "api/get_yt_urls.js": {
       "maxDuration": 30
     }
-  },
-  "edge": {
-    "enabled": true
   }
 }
