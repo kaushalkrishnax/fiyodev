@@ -72,7 +72,7 @@ const Music = () => {
   useEffect(() => {
     if (!searchQuery) {
       setIsLoading(true);
-      searchTracks("Top+Hindi+Tracks").then((tracks) => {
+      searchTracks("Top+Hindi+And+English+Tracks").then((tracks) => {
         setTracks(tracks);
         setIsLoading(false);
       });

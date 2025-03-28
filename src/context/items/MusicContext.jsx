@@ -1,5 +1,7 @@
 import { createContext, useEffect, useState, useRef } from "react";
-import useMusicUtils from "../../hooks/useMusicUtils";
+import { useContext } from "react";
+import AppContext from "./AppContext";
+import useMusicUtils from "../../hooks/useMusicUtils.js";
 
 const MusicContext = createContext(null);
 
@@ -17,7 +19,7 @@ export const MusicProvider = ({ children }) => {
     duration: 0,
   });
   const [isPlayerReady, setIsPlayerReady] = useState(false);
-
+  const { contentQuality } = useContext(AppContext);
   const audioRef = useRef(new Audio());
 
   const MusicUtils = useMusicUtils({
@@ -100,9 +102,26 @@ export const MusicProvider = ({ children }) => {
         setIsAudioLoading(true);
         const audio = audioRef.current;
 
-        if (audio.src !== currentTrack.link) {
-          console.log("Loading new track:", currentTrack.link)
-          audio.src = currentTrack.link;
+        const getQualityIndex = (quality) => {
+          switch (quality) {
+            case "low":
+              return 2;
+            case "normal":
+              return 1;
+            case "high":
+              return 0;
+            default:
+              return 0;
+          }
+        };
+
+        if (
+          audio.src !==
+          currentTrack.urls?.audio?.[getQualityIndex(contentQuality)]
+        ) {
+          console.log("Loading new track:", currentTrack.link);
+          audio.src =
+            currentTrack.urls?.audio?.[getQualityIndex(contentQuality)];
           audio.load();
         }
 
@@ -117,7 +136,7 @@ export const MusicProvider = ({ children }) => {
     };
 
     playAudio();
-  }, [currentTrack?.id, currentTrack?.link]);
+  }, [currentTrack?.id, currentTrack?.link, contentQuality]);
 
   const handleNextAudioTrack = async () => {
     await MusicUtils.handleNextAudioTrack();
