@@ -73,7 +73,6 @@ const Music = () => {
     if (!searchQuery) {
       setIsLoading(true);
       searchTracks("Top+Hindi+Tracks").then((tracks) => {
-        tracks.sort(() => 0.5 - Math.random());
         setTracks(tracks);
         setIsLoading(false);
       });

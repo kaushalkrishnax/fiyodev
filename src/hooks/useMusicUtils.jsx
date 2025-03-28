@@ -1,34 +1,26 @@
 import { useContext } from "react";
 import axios from "axios";
-import { openDB } from "idb";
 import AppContext from "../context/items/AppContext.jsx";
 import { YTMUSIC_BASE_URI } from "../constants.js";
 
 const useMusicUtils = ({
   audioRef,
+  currentTrack,
   setContinuation,
   setCurrentTrack,
   setIsAudioPlaying,
   setIsAudioLoading,
+  previouslyPlayedTracks,
   setPreviouslyPlayedTracks,
 }) => {
   const { contentQuality } = useContext(AppContext);
 
-  const openDatabase = async () => {
-    return openDB("MusicCacheDB", 1, {
-      upgrade(db) {
-        if (!db.objectStoreNames.contains("tracks")) {
-          db.createObjectStore("tracks", { keyPath: "videoId" });
-        }
-      },
-    });
-  };
-
+  /** Search Tracks */
   const searchTracks = async (term, continuation = null) => {
     setContinuation("");
     try {
       const { data } = await axios.get(
-        `${YTMUSIC_BASE_URI}/search?term=${encodeURIComponent(term)}${
+        `${YTMUSIC_BASE_URI}/search?term=${encodeURIComponent(term)}&&${
           continuation ? `&continuation=${continuation}` : ""
         }`
       );
@@ -41,30 +33,21 @@ const useMusicUtils = ({
     }
   };
 
+  /** Get Track Data */
   const getTrackData = async (videoId) => {
-    const db = await openDatabase();
-    const cachedTrack = await db.get("tracks", videoId);
-
-    if (
-      cachedTrack &&
-      cachedTrack.createdAt &&
-      new Date(cachedTrack.createdAt).getTime() + 6 * 60 * 60 * 1000 >
-        new Date().getTime()
-    ) {
-      return cachedTrack;
-    }
-
     try {
       const { data } = await axios.get(
         `${YTMUSIC_BASE_URI}/track?videoId=${videoId}`
       );
-      const { title, artists, images, duration } = data?.data;
+      const { title, artists, images, duration, urls } = data?.data;
 
-      const { data: urlData } = await axios.get(
-        `https://fiyodev.vercel.app/api/get_yt_urls?videoId=${videoId}`
-      );
-
-      const urls = urlData?.data?.urls;
+      if (!urls?.audio?.length) {
+        const { data } = await axios.get(
+          `https://fiyodev.vercel.app/api/get_yt_urls?videoId=${videoId}`
+        );
+        const { urls } = data?.data;
+        return urls;
+      }
 
       const getQualityIndex = (quality) => {
         switch (quality) {
@@ -83,21 +66,17 @@ const useMusicUtils = ({
         videoId,
         title,
         artists,
-        image: images?.[3]?.url || images?.[0]?.url,
+        image: images[3]?.url,
         duration,
         link: urls?.audio?.[getQualityIndex(contentQuality)],
-        createdAt: new Date(),
       };
-
-      await db.put("tracks", trackData);
-
       return trackData;
     } catch (error) {
       console.error(`Error fetching track data: ${error}`);
-      return null;
     }
   };
 
+  /** Get Track */
   const getTrack = async (videoId) => {
     setIsAudioLoading(true);
     try {
@@ -113,14 +92,33 @@ const useMusicUtils = ({
     }
   };
 
+  /** Get suggested track ID */
   const getSuggestedTrackId = async () => {
     try {
-      return null;
+      const { data } = await axios.get(
+        `${YTMUSIC_BASE_URI}/songs/${currentTrack.id}/suggestions`,
+        { params: { limit: 5 } }
+      );
+      const suggestedTrackIds = data.data.map((item) => item.id);
+
+      const availableTracks = suggestedTrackIds.filter(
+        (id) => !previouslyPlayedTracks.includes(id)
+      );
+
+      if (availableTracks.length === 0) {
+        console.error("No suggested tracks available.");
+        return null;
+      }
+
+      return availableTracks[
+        Math.floor(Math.random() * availableTracks.length)
+      ];
     } catch (error) {
       console.error(`Error getSuggestedTrackId: ${error}`);
     }
   };
 
+  /** Handle Audio Play */
   const handleAudioPlay = async () => {
     const audio = audioRef.current;
     if (!audio) return;
@@ -130,6 +128,7 @@ const useMusicUtils = ({
     setIsAudioPlaying(true);
   };
 
+  /** Handle Audio Pause */
   const handleAudioPause = async () => {
     const audio = audioRef.current;
     if (!audio) return;
@@ -139,6 +138,7 @@ const useMusicUtils = ({
     setIsAudioPlaying(false);
   };
 
+  /** Handle Next Audio Track */
   const handleNextAudioTrack = async () => {
     try {
       const nextTrackId = await getSuggestedTrackId();

@@ -26,7 +26,11 @@
       "headers": [
         {
           "key": "Access-Control-Allow-Origin",
-          "value": "*"
+          "value": [
+            "https://fiyodev.vercel.app",
+            "http://localhost:3000",
+            "*"
+          ]
         },
         {
           "key": "Access-Control-Allow-Methods",

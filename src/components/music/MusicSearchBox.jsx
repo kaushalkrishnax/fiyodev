@@ -90,7 +90,7 @@ const SearchBox = ({
     <div className="h-full w-full">
       <form
         ref={searchRef}
-        className={`flex flex-row items-center w-full bg-secondary-bg dark:bg-secondary-bg-dark pl-2 rounded-t-2xl ${
+        className={`flex flex-row items-center w-full bg-secondary-bg dark:bg-secondary-bg-dark p-2 rounded-t-2xl ${
           !searchSuggestions.length > 0 ? "rounded-b-2xl" : ""
         } transition-shadow`}
         role="search"
@@ -102,7 +102,7 @@ const SearchBox = ({
         <input
           type="text"
           ref={searchBoxRef}
-          className="flex-1 bg-transparent outline-none px-2 placeholder-gray-400 dark:placeholder-gray-500 text-md"
+          className="flex-1 bg-transparent outline-none px-2 placeholder-gray-400 dark:placeholder-gray-500 text-md w-full max-w-full"
           onChange={(e) => handleSearchChange(e.target.value)}
           onKeyDown={handleKeyPress}
           value={searchQuery}
@@ -111,10 +111,10 @@ const SearchBox = ({
           autoFocus
           name="search"
         />
-        <div className="flex items-center p-2">
+        <div className="flex items-center w-fit flex-wrap gap-2">
           <button
             onClick={() => setSearchQuery("")}
-            className="flex justify-center px-2 py-1 text-gray-400 rounded-full cursor-pointer"
+            className="flex justify-center px-2 py-1 text-gray-400 hover:text-gray-300 rounded-full cursor-pointer"
             aria-label="Clear search"
             title="Clear"
             type="button"
