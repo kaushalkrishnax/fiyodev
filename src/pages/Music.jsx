@@ -73,7 +73,9 @@ const Music = () => {
     if (!searchQuery) {
       setIsLoading(true);
       searchTracks("Top+Hindi+And+English+Tracks").then((tracks) => {
-        setTracks(tracks);
+        setTracks(
+          tracks?.sort(() => 0.5 - Math.random())
+        );
         setIsLoading(false);
       });
     }
@@ -164,7 +166,7 @@ const Music = () => {
             <CustomTopNav
               logoImage={
                 !isSearchBoxActive &&
-                "https://cdnfiyo.github.io/img/logos/jioSaavn.png"
+                "https://cdnfiyo.github.io/img/logos/flexiyo.png"
               }
               keepBorder={false}
               title={!isSearchBoxActive && "Music"}
@@ -225,7 +227,7 @@ const Music = () => {
                   Enjoy free music on Flexiyo
                 </p>
                 <button
-                  className=" bg-black dark:bg-white hover:opacity-80 transition-opacity text-white dark:text-black px-4 py-2 rounded-full"
+                  className="bg-black dark:bg-white hover:opacity-80 transition-opacity text-white dark:text-black px-4 py-2 rounded-full"
                   onClick={() => getTrack(tracks[0]?.videoId)}
                 >
                   Play #1 track

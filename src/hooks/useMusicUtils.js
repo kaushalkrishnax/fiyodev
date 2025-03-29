@@ -1,5 +1,5 @@
 import axios from "axios";
-import {load} from "cheerio";
+import { load } from "cheerio";
 import { openDB } from "idb";
 import { YTMUSIC_BASE_URI } from "../constants.js";
 
@@ -72,16 +72,19 @@ const useMusicUtils = ({
       if (cachedTrack) {
         return cachedTrack;
       }
-  
-      const trackRes = await axios.get(`${YTMUSIC_BASE_URI}/track?videoId=${videoId}`);
+
+      const trackRes = await axios.get(
+        `${YTMUSIC_BASE_URI}/track?videoId=${videoId}`
+      );
       const trackData = trackRes?.data?.data;
-  
+
       if (!trackData || !trackData.tS || !trackData.tH) {
         throw new Error("Missing tS or tH in track response");
       }
-  
-      const { title, artists, images, duration, playlistId, tS, tH } = trackData;
-  
+
+      const { title, artists, images, duration, playlistId, browseId, tS, tH } =
+        trackData;
+
       const linksResponse = await fetch(
         `https://www.genyt.net/getLinks.php?vid=${videoId}&s=${tS}&h=${tH}`
       );
@@ -89,18 +92,18 @@ const useMusicUtils = ({
         throw new Error(
           `Failed to get download links: ${linksResponse.statusText}`
         );
-  
+
       const $ = load(await linksResponse.text());
       const extractLinks = (filter) =>
         $("a.btn")
           .map((_, el) => $(el).attr("href"))
           .get()
           .filter(filter);
-  
+
       const urls = {
         audio: extractLinks((url) => url.includes("mime=audio%2Fwebm")),
       };
-  
+
       const track = {
         videoId,
         title,
@@ -109,11 +112,12 @@ const useMusicUtils = ({
         duration,
         urls,
         playlistId,
+        browseId,
         createdAt: new Date(),
       };
 
       await cacheTrackData(track);
-  
+
       return track;
     } catch (error) {
       console.error(`Error fetching track data: ${error.message}`);
@@ -134,6 +138,21 @@ const useMusicUtils = ({
       console.error(`Error in getTrack: ${error}`);
     } finally {
       setIsAudioLoading(false);
+    }
+  };
+
+  /** Get Track Lyrics */
+  const getTrackLyrics = async (browseId) => {
+    try {
+      const trackRes = await axios.get(
+        `${YTMUSIC_BASE_URI}/lyrics?browseId=${browseId}`
+      );
+      if (!trackRes?.data?.data) return "No Lyrics Available";
+
+      setCurrentTrack({ ...currentTrack, lyrics: trackRes?.data?.data });
+    } catch (error) {
+      console.error(`Error fetching lyrics: ${error.message}`);
+      return null;
     }
   };
 
@@ -178,6 +197,7 @@ const useMusicUtils = ({
     searchTracks,
     getTrackData,
     getTrack,
+    getTrackLyrics,
     handleAudioPlay,
     handleAudioPause,
     handleNextAudioTrack,

@@ -1,16 +1,15 @@
-import React from "react";
+import React, { useRef, useEffect } from "react";
 import { useContext } from "react";
 import MusicContext from "../../../context/items/MusicContext";
 import AudioProgressBar from "./AudioProgressBar";
 
 const TrackDeck = () => {
   const {
-    getTrack,
+    getTrackLyrics,
     handleAudioPlay,
     handleAudioPause,
     handleNextAudioTrack,
     currentTrack,
-    setCurrentTrack,
     seekTo,
     loopAudio,
     setLoopAudio,
@@ -19,16 +18,14 @@ const TrackDeck = () => {
     audioProgress,
   } = useContext(MusicContext);
 
-  const handlePlayPause = isAudioPlaying
-    ? handleAudioPause
-    : () => {
-        if (currentTrack?.isExternal) {
-          getTrack(currentTrack?.videoId);
-          setCurrentTrack({ ...currentTrack, isExternal: false });
-        } else {
-          handleAudioPlay();
-        }
-      };
+  const handlePlayPause = isAudioPlaying ? handleAudioPause : handleAudioPlay;
+
+  const lyricsRef = useRef(null);
+
+  const loadLyrics = async () => {
+    if (!currentTrack?.browseId) return;
+    await getTrackLyrics(currentTrack?.browseId);
+  };
 
   return (
     <div className="flex justify-start items-center flex-col w-full h-screen p-6 bg-gradient-to-b from-primary-bg to-body-bg dark:from-primary-bg-dark dark:to-body-bg-dark overflow-y-auto no-scrollbar gap-4">
@@ -99,6 +96,30 @@ const TrackDeck = () => {
             <path d="M12.7 1a.7.7 0 0 0-.7.7v5.15L2.05 1.107A.7.7 0 0 0 1 1.712v12.575a.7.7 0 0 0 1.05.607L12 9.149V14.3a.7.7 0 0 0 .7.7h1.6a.7.7 0 0 0 .7-.7V1.7a.7.7 0 0 0-.7-.7h-1.6z"></path>
           </svg>
         </button>
+      </div>
+      <div
+        className="flex flex-col justify-center rounded-xl my-4 p-4 w-full bg-secondary-bg dark:bg-secondary-bg-dark gap-4"
+        ref={lyricsRef}
+      >
+        <h2 className="text-2xl">Lyrics</h2>
+        {currentTrack?.lyrics ? (
+          <p className="text-lg text-gray-300 dark:text-gray-200 max-h-[calc(100vh-300px)] break-words overflow-y-auto no-scrollbar">
+            {currentTrack?.lyrics.split(/\n/).map((line, index) => (
+              <React.Fragment key={index}>
+                {line}
+                <br />
+              </React.Fragment>
+            ))}
+          </p>
+        ) : (
+          <button
+            className="bg-transparent hover:opacity-80 transition-opacity border border-black dark:border-white px-4 py-2 rounded-full"
+            onClick={loadLyrics}
+            title="Load Lyrics"
+          >
+            Load Lyrics
+          </button>
+        )}
       </div>
     </div>
   );
