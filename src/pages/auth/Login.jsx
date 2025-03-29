@@ -105,7 +105,7 @@ const Login = () => {
               <input
                 type="text"
                 name="username"
-                placeholder="Email or Username"
+                placeholder="Username"
                 className={`w-full p-3 bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 border-2 ${
                   formik.touched.username && formik.errors.username
                     ? "border-red-500"
