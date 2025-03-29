@@ -1,23 +1,21 @@
 const FLEXIYO_BASE_URI = "https://fiyodev.vercel.app";
-const FIYOSAAVN_API_BASE_URI = "https://fiyosaavn.vercel.app/api";
 const FIYOGQL_BASE_URI = "https://fiyogql.onrender.com/graphql";
 
 /** Fetches song metadata */
-const getMusicMetadata = async (trackId) => {
+const getMusicMetadata = async (videoId) => {
   try {
-    const res = await fetch(`${FIYOSAAVN_API_BASE_URI}/songs/${trackId}`);
-    if (!res.ok) throw new Error("Failed to fetch song data");
+    const res = await fetch(
+      `https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${videoId}&format=json`
+    );
+    if (!res.ok) throw new Error("Failed to fetch video data");
     const data = await res.json();
-    const song = data?.data?.[0];
 
-    return song
+    return data
       ? {
-          title: `${song.name} • Flexiyo`,
-          description: `Artists: ${song.artists.primary
-            .map((a) => a.name)
-            .join(", ")} | Album: ${song.album.name}`,
-          image: song.image[1].url,
-          ogType: "music.song",
+          title: `${data.title} • Flexiyo`,
+          description: `By ${data.author_name}`,
+          image: data.thumbnail_url,
+          ogType: "video.other",
         }
       : null;
   } catch {
@@ -94,7 +92,7 @@ const generateMetaHtml = (
 export default async function handler(req) {
   const url = new URL(req.url);
   const path = url.pathname;
-  const trackId = url.searchParams.get("track");
+  const videoId = url.searchParams.get("track");
   const username = path.startsWith("/u/") ? path.split("/")[2] : null;
   const redirectUrl = `${FLEXIYO_BASE_URI}${path}`;
 
@@ -105,8 +103,8 @@ export default async function handler(req) {
     ogType: "website",
   };
 
-  if (path === "/music" && trackId) {
-    metadata = (await getMusicMetadata(trackId)) || metadata;
+  if (path === "/music" && videoId) {
+    metadata = (await getMusicMetadata(videoId)) || metadata;
   }
 
   if (path.startsWith("/u/") && username) {

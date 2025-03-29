@@ -12,6 +12,7 @@
   "dependencies": {
     "@apollo/client": "^3.13.4",
     "axios": "^1.8.1",
+    "cheerio": "^1.0.0",
     "formik": "^2.4.6",
     "framer-motion": "^12.4.10",
     "graphql": "^16.10.0",
