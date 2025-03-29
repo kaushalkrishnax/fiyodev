@@ -1,4 +1,5 @@
 import axios from "axios";
+import {load} from "cheerio";
 import { openDB } from "idb";
 import { YTMUSIC_BASE_URI } from "../constants.js";
 
@@ -71,33 +72,51 @@ const useMusicUtils = ({
       if (cachedTrack) {
         return cachedTrack;
       }
-
-      const [trackRes, urlRes] = await Promise.all([
-        axios.get(`${YTMUSIC_BASE_URI}/track?videoId=${videoId}`),
-        axios.get(
-          `https://fiyodev.vercel.app/api/get_yt_urls?videoId=${videoId}`
-        ),
-      ]);
-
-      const { title, artists, images, duration } = trackRes?.data?.data?.track;
-      const { urls } = urlRes?.data?.data;
-
-      const trackData = {
+  
+      const trackRes = await axios.get(`${YTMUSIC_BASE_URI}/track?videoId=${videoId}`);
+      const trackData = trackRes?.data?.data;
+  
+      if (!trackData || !trackData.tS || !trackData.tH) {
+        throw new Error("Missing tS or tH in track response");
+      }
+  
+      const { title, artists, images, duration, playlistId, tS, tH } = trackData;
+  
+      const linksResponse = await fetch(
+        `https://www.genyt.net/getLinks.php?vid=${videoId}&s=${tS}&h=${tH}`
+      );
+      if (!linksResponse.ok)
+        throw new Error(
+          `Failed to get download links: ${linksResponse.statusText}`
+        );
+  
+      const $ = load(await linksResponse.text());
+      const extractLinks = (filter) =>
+        $("a.btn")
+          .map((_, el) => $(el).attr("href"))
+          .get()
+          .filter(filter);
+  
+      const urls = {
+        audio: extractLinks((url) => url.includes("mime=audio%2Fwebm")),
+      };
+  
+      const track = {
         videoId,
         title,
         artists,
-        image: images?.[3]?.url,
+        image: images?.[3]?.url || null,
         duration,
         urls,
-        playlistId: trackRes?.data?.data?.playlistId,
+        playlistId,
         createdAt: new Date(),
       };
 
-      await cacheTrackData(trackData);
-
-      return trackData;
+      await cacheTrackData(track);
+  
+      return track;
     } catch (error) {
-      console.error(`Error fetching track data: ${error}`);
+      console.error(`Error fetching track data: ${error.message}`);
       return null;
     }
   };
