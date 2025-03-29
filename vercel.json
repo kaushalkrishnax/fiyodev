@@ -19,10 +19,5 @@
       "source": "/(.*)",
       "destination": "/index.html"
     }
-  ],
-  "functions": {
-    "api/get_yt_urls.js": {
-      "maxDuration": 30
-    }
-  }
+  ]
 }
