@@ -28,7 +28,7 @@ const TrackDeck = () => {
   };
 
   return (
-    <div className="flex justify-start items-center flex-col w-full h-screen p-6 bg-gradient-to-b from-primary-bg to-body-bg dark:from-primary-bg-dark dark:to-body-bg-dark overflow-y-auto no-scrollbar gap-4">
+    <div className="flex justify-start items-center flex-col w-full h-screen p-6 bg-gradient-to-b from-primary-bg to-body-bg dark:from-primary-bg-dark dark:to-body-bg-dark gap-4 overflow-y-auto no-scrollbar">
       <div className="flex flex-col w-full items-center justify-between">
         <img
           src={currentTrack?.image}
@@ -98,7 +98,7 @@ const TrackDeck = () => {
         </button>
       </div>
       <div
-        className="flex flex-col justify-center rounded-xl my-4 p-4 w-full bg-secondary-bg dark:bg-secondary-bg-dark gap-4"
+        className="flex flex-col justify-center rounded-xl mt-4 p-4 w-full bg-secondary-bg dark:bg-secondary-bg-dark gap-4"
         ref={lyricsRef}
       >
         <h2 className="text-2xl">Lyrics</h2>
@@ -113,7 +113,7 @@ const TrackDeck = () => {
           </p>
         ) : (
           <button
-            className="bg-transparent hover:opacity-80 transition-opacity border border-black dark:border-white px-4 py-2 rounded-full"
+            className="active:opacity-80 transition-opacity border border-black dark:border-white px-4 py-2 rounded-full"
             onClick={loadLyrics}
             title="Load Lyrics"
           >
